@@ -14,7 +14,7 @@ const heroData = [
   },
   {
     id: 1,
-    img: "/heroimg2.jpg",
+    img: "/heroimg.png",
     tag: "Luxury Styling",
     starText: "Top Rated Finish",
     title: "Luxury Installation",
@@ -147,7 +147,7 @@ export const Hero = () => {
               {/* Outer Golden Glow */}
               <div className="absolute -inset-4 bg-[#C9A961]/20 blur-3xl rounded-[3rem] opacity-50 group-hover:opacity-100 transition-opacity duration-700"></div>
 
-              <div className="relative hover:rotate-[3deg] hover:scale-[1.02] rounded-[2.5rem] overflow-hidden border border-white/10  transition-all duration-500 aspect-4/4 shadow-[0_20px_50px_-12px_rgba(201,169,97,0.5)] hover:shadow-[0_25px_50px_rgba(201,169,97,0.5)]">
+              <div className="relative rounded-[2.5rem] overflow-hidden border border-white/10 shadow-[0_20px_50px_-12px_rgba(201,169,97,0.5)] aspect-4/4">
                 <img
                   key={activeItem.id}
                   src={activeItem.img}
@@ -197,7 +197,7 @@ export const Hero = () => {
               {/* Floating Badges */}
 
               {/* Happy Clients Badge */}
-              <div className="absolute -left-6 sm:-left-10 top-[20%] sm:top-1/4 bg-white px-5 sm:px-8 py-3 sm:py-6 rounded-3xl sm:rounded-4xl shadow-[0_25px_60px_rgba(201,169,97,0.3)] z-40 text-center border border-white/20 transform -rotate-3 hover:rotate-0 transition-all duration-500">
+              <div className="absolute -left-6 sm:-left-10 animate-bounce top-[20%] sm:top-1/4 bg-white px-5 sm:px-8 py-3 sm:py-6 rounded-3xl sm:rounded-4xl shadow-[0_25px_60px_rgba(201,169,97,0.3)] z-40 text-center border border-white/20 transform -rotate-3 hover:rotate-0 transition-all duration-500">
                 <div className="text-2xl sm:text-4xl font-black text-[#C9A961] tracking-tighter leading-none mb-1">
                   500+
                 </div>
@@ -207,7 +207,7 @@ export const Hero = () => {
               </div>
 
               {/* Review Card */}
-              <div className="absolute -bottom-10 sm:-bottom-6 -right-6 sm:-right-10 bg-white p-4 sm:p-8 rounded-4xl sm:rounded-[2.5rem] shadow-[0_30px_70px_rgba(201,169,97,0.3)] z-40 max-w-45 sm:max-w-70 border border-white/20 transform rotate-2 hover:rotate-0 transition-all duration-500">
+              <div className="absolute -bottom-10 animate-bounce sm:-bottom-6 -right-6 sm:-right-10 bg-white p-4 sm:p-8 rounded-4xl sm:rounded-[2.5rem] shadow-[0_30px_70px_rgba(201,169,97,0.3)] z-40 max-w-45 sm:max-w-70 border border-white/20 transform rotate-2 hover:rotate-0 transition-all duration-500">
                 <div className="flex gap-0.5 mb-2 sm:mb-4">
                   {[...Array(5)].map((_, i) => (
                     <Star
@@ -232,19 +232,16 @@ export const Hero = () => {
                 <div
                   key={item.id}
                   onClick={() => setActiveIndex(item.id)}
-                  className="flex-1 rounded-2xl sm:rounded-3xl overflow-hidden aspect-video relative group shadow-[0_15px_30px_-5px_rgba(201,169,97,0.3)] cursor-pointer transition-all duration-500 hover:rotate-[3deg] hover:scale-[1.02] hover:shadow-[0_25px_50px_rgba(201,169,97,0.5)] hover:z-50 bg-[#1a1a1a] isolate transform-gpu  overflow-hidden"
+                  className="flex-1 rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 aspect-video relative group shadow-[0_15px_30px_-5px_rgba(201,169,97,0.3)] cursor-pointer transition-all duration-500 hover:rotate-[5deg] hover:shadow-[0_25px_50px_rgba(201,169,97,0.5)] transform"
                 >
-                  {/* Clean Border Overlay */}
-                  <div className="absolute inset-0 rounded-2xl sm:rounded-3xl border border-white/10 pointer-events-none z-50"></div>
-
                   <img
                     src={item.img}
-                    className="w-full h-full object-cover opacity-60  transition-all duration-700  will-change-transform rounded-2xl sm:rounded-3xl"
+                    className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-all duration-700 group-hover:scale-110"
                     alt={item.smallTitle}
                   />
 
                   {/* Hover Overlay with Arrow */}
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10 backdrop-blur-[2px] rounded-">
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10">
                     <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 text-white shadow-xl transform scale-0 group-hover:scale-100 transition-transform duration-300 delay-75">
                       <div className="w-full h-full flex items-center justify-center rounded-full bg-[#C9A961] text-black">
                         <ArrowRight className="w-5 h-5 -rotate-45" />
@@ -252,8 +249,8 @@ export const Hero = () => {
                     </div>
                   </div>
 
-                  <div className="absolute inset-0 bg-linear-to-t from-black/80 to-transparent pointer-events-none rounded-"></div>
-                  <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-5 text-left pointer-events-none z-20">
+                  <div className="absolute inset-0 bg-linear-to-t from-black/80 to-transparent pointer-events-none"></div>
+                  <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-5 text-left pointer-events-none">
                     <p className="text-[9px] sm:text-[11px] font-black text-white uppercase tracking-wider">
                       {item.smallTitle}
                     </p>
@@ -273,7 +270,7 @@ export const Hero = () => {
 
 const TrustBadge = ({ icon, title, subtitle }) => {
   return (
-    <div className="flex items-center gap-4 group cursor-default">
+    <div className="flex items-center gap-4 group cursor-default ">
       <div className="w-12 h-12 rounded-full bg-[#C9A961] flex items-center justify-center shadow-[0_5px_15px_rgba(201,169,97,0.2)] group-hover:shadow-[0_8px_25px_rgba(201,169,97,0.4)] transition-all duration-300 transform group-hover:-translate-y-1">
         {icon}
       </div>
