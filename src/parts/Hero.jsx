@@ -1,7 +1,45 @@
-import React from "react";
+import React, { useState } from "react";
 import { Star, ShieldCheck, Heart, MapPin, ArrowRight } from "lucide-react";
 
+const heroData = [
+  {
+    id: 0,
+    img: "/heroimg.png",
+    tag: "Featured Project",
+    starText: "Perfect Installation",
+    title: "Thicker is Better",
+    subtitle: "Premium 8.5mm LVP • Same price as 5mm",
+    smallTitle: "Featured Project",
+    smallSubtitle: "Main Showcase",
+  },
+  {
+    id: 1,
+    img: "/heroimg2.jpg",
+    tag: "Luxury Styling",
+    starText: "Top Rated Finish",
+    title: "Luxury Installation",
+    subtitle: "Premium LVP Finish designed for elegance.",
+    smallTitle: "Luxury Installation",
+    smallSubtitle: "Premium LVP Finish",
+  },
+  {
+    id: 2,
+    img: "/heroimg.png",
+    tag: "Durability Focus",
+    starText: "Long Lasting",
+    title: "8.5mm Planks",
+    subtitle: "Thicker boards for better sound and feel.",
+    smallTitle: "8.5mm Planks",
+    smallSubtitle: "Thicker is Better",
+  },
+];
+
 export const Hero = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const activeItem = heroData[activeIndex];
+  const smallItems = heroData.filter((_, index) => index !== activeIndex);
+
   return (
     <section className="relative w-full pt-10 pb-20 lg:pt-20 lg:pb-32 overflow-hidden">
       {/* Background Decorative Elements */}
@@ -26,6 +64,18 @@ export const Hero = () => {
           ></div>
         ))}
       </div>
+
+      <style>
+        {`
+          @keyframes gentleSlide {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          .animate-gentle-slide {
+            animation: gentleSlide 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+          }
+        `}
+      </style>
 
       <div className="container mx-auto px-6 lg:px-12 max-w-7xl relative z-10">
         <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-12 lg:gap-20 items-start">
@@ -97,22 +147,31 @@ export const Hero = () => {
               {/* Outer Golden Glow */}
               <div className="absolute -inset-4 bg-[#C9A961]/20 blur-3xl rounded-[3rem] opacity-50 group-hover:opacity-100 transition-opacity duration-700"></div>
 
-              <div className="relative rounded-[2.5rem] overflow-hidden border border-white/10 shadow-[0_20px_50px_-12px_rgba(201,169,97,0.5)] aspect-4/4">
+              <div className="relative hover:rotate-[3deg] hover:scale-[1.02] rounded-[2.5rem] overflow-hidden border border-white/10  transition-all duration-500 aspect-4/4 shadow-[0_20px_50px_-12px_rgba(201,169,97,0.5)] hover:shadow-[0_25px_50px_rgba(201,169,97,0.5)]">
                 <img
-                  src="/heroimg.png"
-                  alt="Premium Flooring Installation"
-                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                  key={activeItem.id}
+                  src={activeItem.img}
+                  alt={activeItem.title}
+                  className="w-full h-full object-cover animate-gentle-slide"
                 />
 
                 {/* Image Overlay: Black/50 to Transparent */}
                 <div className="absolute inset-x-0 bottom-0 h-2/3 bg-linear-to-t from-black/80 via-black/40 to-transparent"></div>
 
                 {/* Floating Content inside Main Image */}
-                <div className="absolute top-8 right-8 px-5 py-2 bg-white text-black text-[10px] font-black rounded-full uppercase tracking-widest shadow-xl">
-                  Featured Project
+                <div
+                  key={`tag-${activeItem.id}`}
+                  className="absolute top-8 right-8 px-5 py-2 bg-white text-black text-[10px] font-black rounded-full uppercase tracking-widest shadow-xl animate-gentle-slide"
+                  style={{ animationDelay: "0.1s" }}
+                >
+                  {activeItem.tag}
                 </div>
 
-                <div className="absolute bottom-10 left-10 right-10 z-10 space-y-4">
+                <div
+                  key={`content-${activeItem.id}`}
+                  className="absolute bottom-10 left-10 right-10 z-10 space-y-4 animate-gentle-slide"
+                  style={{ animationDelay: "0.1s" }}
+                >
                   <div className="flex items-center gap-2">
                     <div className="flex gap-0.5">
                       {[...Array(5)].map((_, i) => (
@@ -123,14 +182,14 @@ export const Hero = () => {
                       ))}
                     </div>
                     <span className="text-white text-sm font-bold tracking-wide">
-                      Perfect Installation
+                      {activeItem.starText}
                     </span>
                   </div>
                   <h3 className="text-4xl font-black text-white leading-tight">
-                    Thicker is Better
+                    {activeItem.title}
                   </h3>
                   <p className="text-gray-300 font-medium text-lg">
-                    Premium 8.5mm LVP • Same price as 5mm
+                    {activeItem.subtitle}
                   </p>
                 </div>
               </div>
@@ -169,38 +228,41 @@ export const Hero = () => {
 
             {/* Bottom Secondary Images */}
             <div className="flex gap-3 sm:gap-4 mt-16 sm:mt-8 lg:-mt-12 relative z-30 lg:translate-y-24">
-              <div className="flex-1 rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 aspect-video relative group shadow-[0_15px_30px_-5px_rgba(201,169,97,0.3)]">
-                <img
-                  src="/heroimg.png"
-                  className="w-full h-full object-cover opacity-60 group-hover:scale-110 transition-transform duration-700"
-                  alt="Process"
-                />
-                <div className="absolute inset-0 bg-linear-to-t from-black/80 to-transparent"></div>
-                <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-5 text-left">
-                  <p className="text-[9px] sm:text-[11px] font-black text-white uppercase tracking-wider">
-                    Luxury Installation
-                  </p>
-                  <p className="text-[8px] sm:text-[9px] text-gray-400 font-bold">
-                    Premium LVP Finish
-                  </p>
+              {smallItems.map((item) => (
+                <div
+                  key={item.id}
+                  onClick={() => setActiveIndex(item.id)}
+                  className="flex-1 rounded-2xl sm:rounded-3xl overflow-hidden aspect-video relative group shadow-[0_15px_30px_-5px_rgba(201,169,97,0.3)] cursor-pointer transition-all duration-500 hover:rotate-[3deg] hover:scale-[1.02] hover:shadow-[0_25px_50px_rgba(201,169,97,0.5)] hover:z-50 bg-[#1a1a1a] isolate transform-gpu  overflow-hidden"
+                >
+                  {/* Clean Border Overlay */}
+                  <div className="absolute inset-0 rounded-2xl sm:rounded-3xl border border-white/10 pointer-events-none z-50"></div>
+
+                  <img
+                    src={item.img}
+                    className="w-full h-full object-cover opacity-60  transition-all duration-700  will-change-transform rounded-2xl sm:rounded-3xl"
+                    alt={item.smallTitle}
+                  />
+
+                  {/* Hover Overlay with Arrow */}
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10 backdrop-blur-[2px] rounded-">
+                    <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 text-white shadow-xl transform scale-0 group-hover:scale-100 transition-transform duration-300 delay-75">
+                      <div className="w-full h-full flex items-center justify-center rounded-full bg-[#C9A961] text-black">
+                        <ArrowRight className="w-5 h-5 -rotate-45" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="absolute inset-0 bg-linear-to-t from-black/80 to-transparent pointer-events-none rounded-"></div>
+                  <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-5 text-left pointer-events-none z-20">
+                    <p className="text-[9px] sm:text-[11px] font-black text-white uppercase tracking-wider">
+                      {item.smallTitle}
+                    </p>
+                    <p className="text-[8px] sm:text-[9px] text-gray-400 font-bold">
+                      {item.smallSubtitle}
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex-1 rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 aspect-video relative group shadow-[0_15px_30px_-5px_rgba(201,169,97,0.3)]">
-                <img
-                  src="/heroimg.png"
-                  className="w-full h-full object-cover opacity-60 group-hover:scale-110 transition-transform duration-700"
-                  alt="Process"
-                />
-                <div className="absolute inset-0 bg-linear-to-t from-black/80 to-transparent"></div>
-                <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-5 text-left">
-                  <p className="text-[9px] sm:text-[11px] font-black text-white uppercase tracking-wider">
-                    8.5mm Planks
-                  </p>
-                  <p className="text-[8px] sm:text-[9px] text-gray-400 font-bold">
-                    Thicker is Better
-                  </p>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
