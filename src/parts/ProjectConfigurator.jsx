@@ -8,9 +8,11 @@ import {
   Ruler,
   MousePointer2,
 } from "lucide-react";
+import BookingModal from "./BookingModal";
 
 export const ProjectConfigurator = () => {
   const [selectedType, setSelectedType] = useState("both");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const options = [
     {
@@ -156,7 +158,10 @@ export const ProjectConfigurator = () => {
                   </div>
                 </div>
 
-                <button className="w-full py-5 bg-[#1A1A1A] hover:bg-black text-white font-black rounded-2xl transition-all duration-300 shadow-xl flex items-center justify-center gap-3 active:scale-[0.98]">
+                <button 
+                  onClick={() => setIsModalOpen(true)}
+                  className="w-full py-5 bg-[#1A1A1A] hover:bg-black text-white font-black rounded-2xl transition-all duration-300 shadow-xl flex items-center justify-center gap-3 active:scale-[0.98]"
+                >
                   Lock In This Price
                 </button>
               </div>
@@ -177,7 +182,10 @@ export const ProjectConfigurator = () => {
                   </p>
                 </div>
               </div>
-              <button className="w-full py-4 bg-gray-50 border border-gray-100 text-black font-black rounded-xl hover:bg-gray-100 transition-all flex items-center justify-center gap-2">
+              <button 
+                onClick={() => setIsModalOpen(true)}
+                className="w-full py-4 bg-gray-50 border border-gray-100 text-black font-black rounded-xl hover:bg-gray-100 transition-all flex items-center justify-center gap-2"
+              >
                 Book Free Visit
               </button>
             </div>
@@ -192,6 +200,11 @@ export const ProjectConfigurator = () => {
           </div>
         </div>
       </div>
+      <BookingModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        initialData={{ type: selectedType }} 
+      />
     </section>
   );
 };

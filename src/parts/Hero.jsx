@@ -14,7 +14,7 @@ const heroData = [
   },
   {
     id: 1,
-    img: "/heroimg.png",
+    img: "/heroimg2.jpg",
     tag: "Luxury Styling",
     starText: "Top Rated Finish",
     title: "Luxury Installation",
@@ -124,13 +124,19 @@ export const Hero = () => {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <button className="group relative px-10 py-5 bg-[#C9A961] hover:bg-[#b89850] text-black font-black rounded-2xl flex items-center justify-center gap-3 text-lg transition-all duration-300 shadow-[0_10px_30px_rgba(201,169,97,0.3)] hover:shadow-[0_15px_40px_rgba(201,169,97,0.4)] hover:-translate-y-1">
+              <a
+                href="#configurator"
+                className="group relative px-10 py-5 bg-[#C9A961] hover:bg-[#b89850] text-black font-black rounded-2xl flex items-center justify-center gap-3 text-lg transition-all duration-300 shadow-[0_10px_30px_rgba(201,169,97,0.3)] hover:shadow-[0_15px_40px_rgba(201,169,97,0.4)] hover:-translate-y-1"
+              >
                 Get Instant Quote
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
-              <button className="px-10 py-5 bg-transparent border-2 border-white/10 hover:border-white/30 text-white font-bold rounded-2xl transition-all duration-300 text-lg hover:bg-white/5">
+              </a>
+              <a
+                href="#configurator"
+                className="px-10 py-5 bg-transparent border-2 border-white/10 hover:border-white/30 text-white font-bold rounded-2xl transition-all duration-300 text-lg hover:bg-white/5 flex items-center justify-center"
+              >
                 Schedule Free Visit
-              </button>
+              </a>
             </div>
 
             {/* Location Tag */}
@@ -197,7 +203,7 @@ export const Hero = () => {
               {/* Floating Badges */}
 
               {/* Happy Clients Badge */}
-              <div className="absolute -left-6 sm:-left-10 animate-bounce top-[20%] sm:top-1/4 bg-white px-5 sm:px-8 py-3 sm:py-6 rounded-3xl sm:rounded-4xl shadow-[0_25px_60px_rgba(201,169,97,0.3)] z-40 text-center border border-white/20 transform -rotate-3 hover:rotate-0 transition-all duration-500">
+              <div className="absolute -left-6 bunch sm:-left-10  ease-linear top-[20%] sm:top-1/4 bg-white px-5 sm:px-8 py-3 sm:py-6 rounded-3xl sm:rounded-4xl shadow-[0_25px_60px_rgba(201,169,97,0.3)] z-40 text-center border border-white/20 transform -rotate-3 hover:rotate-0 transition-all duration-500">
                 <div className="text-2xl sm:text-4xl font-black text-[#C9A961] tracking-tighter leading-none mb-1">
                   500+
                 </div>
@@ -207,7 +213,7 @@ export const Hero = () => {
               </div>
 
               {/* Review Card */}
-              <div className="absolute -bottom-10 animate-bounce sm:-bottom-6 -right-6 sm:-right-10 bg-white p-4 sm:p-8 rounded-4xl sm:rounded-[2.5rem] shadow-[0_30px_70px_rgba(201,169,97,0.3)] z-40 max-w-45 sm:max-w-70 border border-white/20 transform rotate-2 hover:rotate-0 transition-all duration-500">
+              <div className="absolute -bottom-10 bunch sm:-bottom-6 -right-6 sm:-right-10 bg-white p-4 sm:p-8 rounded-4xl sm:rounded-[2.5rem] shadow-[0_30px_70px_rgba(201,169,97,0.3)] z-40 max-w-45 sm:max-w-70 border border-white/20 transform rotate-2 hover:rotate-0 transition-all duration-500">
                 <div className="flex gap-0.5 mb-2 sm:mb-4">
                   {[...Array(5)].map((_, i) => (
                     <Star

@@ -1,1 +1,22 @@
 @import "tailwindcss";
+.bunch {
+  animation: bunch 1.5s linear infinite;
+}
+
+@keyframes bunch {
+  0% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(6px);
+  }
+  50% {
+    transform: translateY(10px);
+  }
+  75% {
+    transform: translateY(6px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
