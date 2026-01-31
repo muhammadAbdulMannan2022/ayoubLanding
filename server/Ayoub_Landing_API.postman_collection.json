@@ -1,0 +1,264 @@
+{
+  "info": {
+    "name": "Ayoub Landing - Jobber API",
+    "description": "API collection for testing Jobber integration endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "YOUR_ACCESS_TOKEN_HERE",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Get Login URL",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Check Auth Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "status"]
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh_token\": \"YOUR_REFRESH_TOKEN\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/refresh",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "refresh"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bookings",
+      "item": [
+        {
+          "name": "Create Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"phone\": \"555-0123\",\n  \"address\": {\n    \"street1\": \"123 Main St\",\n    \"city\": \"Miami\",\n    \"province\": \"FL\",\n    \"postalCode\": \"33101\"\n  },\n  \"date\": \"2026-02-15\",\n  \"time\": \"14:00\",\n  \"projectType\": \"Floor & Stairs\",\n  \"notes\": \"Interested in LVP flooring for living room and stairs\",\n  \"accessToken\": \"{{accessToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/bookings/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "bookings", "create"]
+            }
+          }
+        },
+        {
+          "name": "Create Quote",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientId\": \"CLIENT_ID_FROM_JOBBER\",\n  \"projectType\": \"both\",\n  \"stairDetails\": {\n    \"steps\": 12,\n    \"landings\": 1,\n    \"boxSteps\": 0,\n    \"material\": \"LVP 5mm\"\n  },\n  \"floorDetails\": {\n    \"sqft\": 500,\n    \"roomCount\": 3,\n    \"material\": \"LVP\",\n    \"removal\": \"carpet\"\n  },\n  \"totalEstimate\": 4500,\n  \"accessToken\": \"{{accessToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/bookings/quote",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "bookings", "quote"]
+            }
+          }
+        },
+        {
+          "name": "List Bookings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/bookings/list?accessToken={{accessToken}}&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "bookings", "list"],
+              "query": [
+                {
+                  "key": "accessToken",
+                  "value": "{{accessToken}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Jobber",
+      "item": [
+        {
+          "name": "Create Client",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientData\": {\n    \"firstName\": \"Jane\",\n    \"lastName\": \"Smith\",\n    \"email\": \"jane.smith@example.com\",\n    \"phone\": \"555-0456\",\n    \"address\": {\n      \"street1\": \"456 Oak Ave\",\n      \"city\": \"Miami\",\n      \"province\": \"FL\",\n      \"postalCode\": \"33102\"\n    }\n  },\n  \"accessToken\": \"{{accessToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/jobber/client/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "jobber", "client", "create"]
+            }
+          }
+        },
+        {
+          "name": "Search Client",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/jobber/client/search?email=john.doe@example.com&accessToken={{accessToken}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "jobber", "client", "search"],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "john.doe@example.com"
+                },
+                {
+                  "key": "accessToken",
+                  "value": "{{accessToken}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Visit",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"visitData\": {\n    \"clientId\": \"CLIENT_ID_FROM_JOBBER\",\n    \"title\": \"Free In-Home Consultation\",\n    \"startAt\": \"2026-02-15T14:00:00Z\",\n    \"endAt\": \"2026-02-15T15:00:00Z\",\n    \"anytime\": false,\n    \"instructions\": \"Customer interested in flooring for living room\"\n  },\n  \"accessToken\": \"{{accessToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/jobber/visit/create",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "jobber", "visit", "create"]
+            }
+          }
+        },
+        {
+          "name": "List Visits",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/jobber/visits?accessToken={{accessToken}}&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "jobber", "visits"],
+              "query": [
+                {
+                  "key": "accessToken",
+                  "value": "{{accessToken}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Custom GraphQL Query",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query { account { name } }\",\n  \"variables\": {},\n  \"accessToken\": \"{{accessToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/jobber/graphql",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "jobber", "graphql"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
