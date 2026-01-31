@@ -44,6 +44,48 @@ export const ProjectConfigurator = () => {
     quizResults: null
   });
 
+  const calculateTotal = () => {
+    let total = 0;
+    
+    // Stair Calculation
+    if (selectedType === "stairs" || selectedType === "both") {
+      total += (Number(stairData.steps) || 0) * 135;
+      total += (Number(stairData.landings) || 0) * 200;
+      total += (Number(stairData.boxSteps) || 0) * 250;
+    }
+
+    // Floor Calculation
+    if (selectedType === "floor" || selectedType === "both") {
+      const sqft = Number(floorData.sqft) || 0;
+      let materialPrice = 0;
+      
+      if (floorData.material === "lvp") {
+        const gradePrices = { "8.5mm": 6.99, "5mm": 5.99, "6mm": 6.99, "7mm": 7.99 };
+        materialPrice = gradePrices[floorData.grade] || 0;
+      } else if (floorData.material === "hardwood") {
+        materialPrice = 10.99;
+      } else if (floorData.material === "tile") {
+        const gradePrices = { ceramic: 6.99, porcelain: 7.99, luxury: 9.99, not_sure: 6.99 };
+        materialPrice = gradePrices[floorData.grade] || 0;
+      } else if (floorData.material === "laminate") {
+        const gradePrices = { value: 4.99, premium: 5.99, waterproof: 6.99, not_sure: 4.99 };
+        materialPrice = gradePrices[floorData.grade] || 0;
+      }
+
+      const removalPrices = { none: 0, carpet: 0.50, tile: 4.00, hardwood: 4.50, vinyl: 0.75 };
+      const removalPrice = removalPrices[floorData.removal] || 0;
+
+      const trimPrices = { "1/4round": 0, baseboard: 1.5 };
+      const trimPrice = trimPrices[floorData.trim] || 0;
+
+      total += sqft * (materialPrice + removalPrice + trimPrice);
+    }
+
+    return total;
+  };
+
+  const totalEstimate = calculateTotal();
+
   const options = [
     {
       id: "stairs",
@@ -266,14 +308,19 @@ export const ProjectConfigurator = () => {
                    <span className="text-[10px] font-black text-[#C9A961] uppercase tracking-[0.2em]">Your Custom Quote</span>
                 </div>
 
-                <div className="bg-black/40 rounded-3xl p-8 text-center border border-white/5 relative overflow-hidden">
-                   <div className="absolute inset-0 bg-gradient-to-b from-[#C9A961]/5 to-transparent pointer-events-none"></div>
-                   <div className="w-16 h-16 rounded-full bg-[#C9A961]/20 mx-auto flex items-center justify-center mb-4 border border-[#C9A961]/30">
-                      <Lock className="w-6 h-6 text-[#C9A961]" />
-                   </div>
-                   <h4 className="text-2xl font-black text-white mb-2">Price Ready!</h4>
-                   <p className="text-white/40 text-xs font-mediumSmall">Unlock to view your personalized quote</p>
-                </div>
+                 <div className="bg-black/40 rounded-3xl p-8 text-center border border-white/5 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-b from-[#C9A961]/5 to-transparent pointer-events-none"></div>
+                    <div className="flex flex-col items-center">
+                       <span className="text-[10px] font-black text-[#C9A961] uppercase tracking-[0.2em] mb-2">Total Estimate</span>
+                       <div className="flex items-baseline gap-1">
+                          <span className="text-4xl font-black text-white">${totalEstimate.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                       </div>
+                       <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest mt-4 flex items-center gap-2">
+                          <CheckCircle2 className="w-3 h-3 text-green-500" />
+                          Professional Pricing Ready
+                       </p>
+                    </div>
+                 </div>
 
                 <div className="space-y-3 pt-4 border-t border-white/5">
                    <div className="flex justify-between items-center text-sm">
