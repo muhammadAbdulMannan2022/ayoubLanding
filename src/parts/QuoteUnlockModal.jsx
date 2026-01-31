@@ -1,8 +1,12 @@
 import React, { useState } from "react";
-import { X, Lock, CheckCircle2, ShieldCheck, Mail, Loader2 } from "lucide-react";
+import { X, Lock, CheckCircle2, ShieldCheck, Mail, Loader2, AlertCircle } from "lucide-react";
+import { createQuote } from "../api/backend";
+import { useNavigate } from "react-router";
 
 const QuoteUnlockModal = ({ isOpen, onClose, projectData }) => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -11,15 +15,81 @@ const QuoteUnlockModal = ({ isOpen, onClose, projectData }) => {
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate generation
-    setTimeout(() => {
-      setLoading(false);
-      alert("Quote generated and sent to " + formData.email);
+    setError(null);
+
+    try {
+      // Split full name
+      const nameParts = formData.fullName.trim().split(' ');
+      const firstName = nameParts[0] || '';
+
+      // Calculate total from project data
+      const calculateTotal = () => {
+        let total = 0;
+        
+        if (projectData?.type === 'stairs' || projectData?.type === 'both') {
+          const stairDetails = projectData?.stairDetails || {};
+          total += (Number(stairDetails.steps) || 0) * 135;
+          total += (Number(stairDetails.landings) || 0) * 200;
+          total += (Number(stairDetails.boxSteps) || 0) * 250;
+        }
+
+        if (projectData?.type === 'floor' || projectData?.type === 'both') {
+          const floorDetails = projectData?.floorDetails || {};
+          const sqft = Number(floorDetails.sqft) || 0;
+          
+          let materialPrice = 0;
+          if (floorDetails.material === 'lvp') {
+            const gradePrices = { "8.5mm": 6.99, "5mm": 5.99, "6mm": 6.99, "7mm": 7.99 };
+            materialPrice = gradePrices[floorDetails.grade] || 0;
+          } else if (floorDetails.material === 'hardwood') {
+            materialPrice = 10.99;
+          } else if (floorDetails.material === 'tile') {
+            const gradePrices = { ceramic: 6.99, porcelain: 7.99, luxury: 9.99, not_sure: 6.99 };
+            materialPrice = gradePrices[floorDetails.grade] || 0;
+          } else if (floorDetails.material === 'laminate') {
+            const gradePrices = { value: 4.99, premium: 5.99, waterproof: 6.99, not_sure: 4.99 };
+            materialPrice = gradePrices[floorDetails.grade] || 0;
+          }
+
+          const removalPrices = { none: 0, carpet: 0.50, tile: 4.00, hardwood: 4.50, vinyl: 0.75 };
+          const removalPrice = removalPrices[floorDetails.removal] || 0;
+
+          const trimPrices = { "1/4round": 0, baseboard: 1.5 };
+          const trimPrice = trimPrices[floorDetails.trim] || 0;
+
+          total += sqft * (materialPrice + removalPrice + trimPrice);
+        }
+
+        return total;
+      };
+
+      const totalEstimate = calculateTotal();
+
+      // Send quote via backend API
+      const result = await createQuote({
+        email: formData.email,
+        firstName,
+        projectType: projectData?.type || 'flooring',
+        totalEstimate,
+        stairDetails: projectData?.stairDetails,
+        floorDetails: projectData?.floorDetails
+      });
+
+      console.log('Quote sent successfully:', result);
+
+      // Close modal and navigate to success page
       onClose();
-    }, 2000);
+      navigate("/thankyouformsubmitted");
+
+    } catch (error) {
+      console.error('Quote generation error:', error);
+      setError(error.message || 'Failed to send quote. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -113,6 +183,16 @@ const QuoteUnlockModal = ({ isOpen, onClose, projectData }) => {
               />
               <p className="text-[10px] text-gray-400 font-medium italic mt-1">For faster scheduling</p>
             </div>
+
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-bold text-red-900">Failed to Send Quote</p>
+                  <p className="text-xs text-red-700 mt-1">{error}</p>
+                </div>
+              </div>
+            )}
 
             <button 
               disabled={loading}
