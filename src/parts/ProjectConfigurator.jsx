@@ -34,7 +34,9 @@ export const ProjectConfigurator = () => {
     sqft: "",
     removal: "none",
     trim: "1/4round",
-    material: "lvp",
+    material: "",
+    grade: "",
+    finish: "",
     timeline: "As soon as possible",
     quizResults: null
   });
