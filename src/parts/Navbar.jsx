@@ -13,12 +13,12 @@ export const Navbar = () => {
         <div className="container mx-auto px-4 lg:px-12 max-w-7xl flex items-center justify-between">
           <div className="flex items-center gap-10">
             <div className="flex items-center gap-1">
-              <span className="text-[#C9A961] font-extrabold text-2xl tracking-tighter">
-                ALPHA
-              </span>
-              <span className="text-white font-bold text-2xl tracking-tighter">
-                FLOORING
-              </span>
+              <img
+                src="/logo.png"
+                alt="ALPHA
+FLOORING"
+                className="w-auto h-10"
+              />
             </div>
 
             <Link
