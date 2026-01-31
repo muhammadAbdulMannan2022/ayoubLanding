@@ -14,12 +14,15 @@ import {
 } from "lucide-react";
 import BookingModal from "./BookingModal";
 import QuoteUnlockModal from "./QuoteUnlockModal";
+import PreConfigModal from "./PreConfigModal";
 
 import FloorDetailsForm from "./FloorDetailsForm";
 
 export const ProjectConfigurator = () => {
-  const [selectedType, setSelectedType] = useState("both");
+  const [selectedType, setSelectedType] = useState(null);
+  const [pendingType, setPendingType] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPreModalOpen, setIsPreModalOpen] = useState(false);
   const [isUnlockModalOpen, setIsUnlockModalOpen] = useState(false);
   const [stairData, setStairData] = useState({
     steps: "0",
@@ -208,7 +211,10 @@ export const ProjectConfigurator = () => {
                 {options.map((option) => (
                   <button
                     key={option.id}
-                    onClick={() => setSelectedType(option.id)}
+                    onClick={() => {
+                      setPendingType(option.id);
+                      setIsPreModalOpen(true);
+                    }}
                     className={`relative p-8 rounded-3xl border-2 transition-all duration-500 flex flex-col items-start gap-6 group overflow-hidden ${
                       selectedType === option.id
                         ? "border-[#C9A961] bg-white shadow-[0_20px_40px_-15px_rgba(201,169,97,0.2)]"
@@ -394,6 +400,16 @@ export const ProjectConfigurator = () => {
           type: selectedType, 
           stairDetails: stairData,
           floorDetails: floorData
+        }}
+      />
+
+      <PreConfigModal
+        isOpen={isPreModalOpen}
+        onClose={() => setIsPreModalOpen(false)}
+        projectType={pendingType}
+        onStart={() => {
+          setSelectedType(pendingType);
+          setIsPreModalOpen(false);
         }}
       />
     </section>

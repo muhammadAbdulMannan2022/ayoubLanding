@@ -436,13 +436,18 @@ const FloorDetailsForm = ({ data, onChange, onComplete, onSkip }) => {
       <div className="space-y-3 pt-12">
         <button 
           onClick={onComplete}
-          className="w-full py-5 bg-[#D1D5DB] text-gray-500 font-black rounded-xl cursor-not-allowed transition-all"
+          disabled={!data.material || !data.grade || !data.sqft || (data.material && !data.finish)}
+          className={`w-full py-5 font-black rounded-xl transition-all ${
+            data.material && data.grade && data.sqft && data.finish
+              ? "bg-[#C9A961] text-white hover:bg-[#B69752] shadow-xl shadow-[#C9A961]/20"
+              : "bg-[#D1D5DB] text-gray-500 cursor-not-allowed"
+          }`}
         >
           Complete All Steps to Continue
         </button>
         <button 
           onClick={onSkip}
-          className="w-full py-5 bg-[#D1D5DB] text-gray-500 font-black rounded-xl hover:bg-gray-200 transition-all font-black"
+          className="w-full py-5 bg-white border-2 border-gray-50 text-gray-400 font-black rounded-xl hover:border-gray-100 hover:text-gray-600 transition-all"
         >
           Skip to Schedule
         </button>

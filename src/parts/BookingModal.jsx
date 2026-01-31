@@ -92,7 +92,7 @@ const BookingModal = ({ isOpen, onClose, initialData, onComplete }) => {
                        key={i} 
                        onClick={() => handleDateClick(day)} 
                        className={`h-10 w-10 mx-auto rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 
-                         ${selectedDate === d
+                         ${selectedDate === day
                            ? "bg-[#C9A961] text-black shadow-lg" 
                            : "text-gray-700 hover:bg-[#C9A961]/10 hover:text-[#C9A961]"
                          }`}
