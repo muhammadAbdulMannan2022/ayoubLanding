@@ -17,6 +17,7 @@ AdminJS.registerAdapter(AdminJSSequelize);
  * Initialize Admin.js with authentication
  */
 export const setupAdmin = (app) => {
+  console.log(__dirname, "qqqqqqqqqqqqqqqqqqqqq");
   const componentLoader = new ComponentLoader();
 
   const dashboardComponent = componentLoader.add(
@@ -32,13 +33,13 @@ export const setupAdmin = (app) => {
     branding: {
       companyName: "Ayoub Landing",
       withMadeWithLove: false,
-      logo: "https://i.ibb.co.com/nqV1xY21/logo.png",
+      logo: "/logo.png",
     },
+    componentLoader,
     dashboard: {
       component: dashboardComponent,
     },
 
-    componentLoader,
     resources: [
       {
         resource: hero,

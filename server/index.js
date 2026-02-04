@@ -1,16 +1,20 @@
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
-import morgan from "morgan";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
-import session from "express-session";
 import authRoutes from "./routes/auth.js";
 import bookingRoutes from "./routes/bookings.js";
 import heroRoutes from "./routes/hero.js";
 import { initializeDatabase } from "./db/database.js";
 import sequelize from "./db/sequelize.js";
 import { setupAdmin, createDefaultAdmin } from "./db/admin.js";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // import jobberRoutes from "./routes/jobber.js";
 
 // Load environment variables
@@ -46,9 +50,7 @@ app.use(
         return callback(null, true);
       }
 
-      if (
-        process.env.NODE_ENV === "development"
-      ) {
+      if (process.env.NODE_ENV === "development") {
         return callback(null, true);
       }
 
@@ -61,6 +63,7 @@ app.use(
     credentials: true,
   }),
 );
+app.use(express.static(path.join(__dirname, "/public")));
 
 // Async IIFE for initialization
 (async () => {

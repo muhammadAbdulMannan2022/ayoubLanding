@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  H1,
-  Button,
-  Input,
-  Label,
-  Illustration,
-} from "@adminjs/design-system";
+import { Box, Button, Input, Label } from "@adminjs/design-system";
 
 const Login = () => {
   const [error, setError] = useState("");
@@ -29,13 +22,6 @@ const Login = () => {
       height="100vh"
       bg="bg"
     >
-      <Box mb="xxl">
-        <img
-          src="https://i.ibb.co.com/nqV1xY21/logo.png"
-          alt="Ayoub Landing Logo"
-          width="200"
-        />
-      </Box>
       <Box
         as="form"
         action="/admin/login"
@@ -46,6 +32,14 @@ const Login = () => {
         boxShadow="card"
         width={["100%", "100%", "480px"]}
       >
+        <Box mb="xl" display="flex" justifyContent="center">
+          <img
+            src="/logo.png"
+            alt="Ayoub Landing Logo"
+            width="200"
+            height="auto"
+          />
+        </Box>
         {error && (
           <Box
             bg="danger"

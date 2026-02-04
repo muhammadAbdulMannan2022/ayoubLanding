@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import { Box, Loader } from "@adminjs/design-system";
+import { Box } from "@adminjs/design-system";
 
 const Dashboard = () => {
   const navigate = useNavigate();

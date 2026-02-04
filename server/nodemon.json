@@ -1,15 +1,7 @@
 {
-  "watch": [
-    "index.js",
-    "routes/",
-    "services/",
-    ".env"
-  ],
-  "ext": "js,json",
-  "ignore": [
-    "node_modules/",
-    "*.test.js"
-  ],
+  "watch": ["index.js", "routes/", "services/", ".env"],
+  "ext": "js,json,jsx",
+  "ignore": ["node_modules/", "*.test.js"],
   "exec": "node index.js",
   "env": {
     "NODE_ENV": "development"
