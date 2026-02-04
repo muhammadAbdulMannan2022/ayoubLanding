@@ -3,8 +3,7 @@
  * Handles all communication with the Express backend server
  */
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 /**
  * Create a booking
@@ -13,7 +12,7 @@ const API_BASE_URL =
  */
 export const createBooking = async (bookingData) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/bookings/create`, {
+    const response = await fetch(`${API_BASE_URL}/api/bookings/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -42,7 +41,7 @@ export const createBooking = async (bookingData) => {
  */
 export const createQuote = async (quoteData) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/bookings/quote`, {
+    const response = await fetch(`${API_BASE_URL}/api/bookings/quote`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -70,7 +69,7 @@ export const createQuote = async (quoteData) => {
  */
 export const checkServerHealth = async () => {
   try {
-    const response = await fetch("http://localhost:5000/health");
+    const response = await fetch(`${API_BASE_URL}/health`);
     const data = await response.json();
     return data.status === "OK";
   } catch (error) {
@@ -79,8 +78,25 @@ export const checkServerHealth = async () => {
   }
 };
 
+// get hero data
+export const getHeroData = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/hero`, {
+      method: "GET",
+      headers: {
+        "ngrok-skip-browser-warning": "true",
+      },
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching hero data:", error);
+    throw error;
+  }
+};
 export default {
   createBooking,
   createQuote,
   checkServerHealth,
+  getHeroData,
 };

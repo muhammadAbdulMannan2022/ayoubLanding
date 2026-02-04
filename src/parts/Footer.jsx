@@ -12,7 +12,7 @@ export const Footer = () => {
           <div className="space-y-6">
             <div className="flex items-center gap-1">
               <img
-                src="/logo.png"
+                src="https://i.ibb.co.com/nqV1xY21/logo.png"
                 alt="ALPHA FLOORING"
                 className="w-auto h-10"
               />

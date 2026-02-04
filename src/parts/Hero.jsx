@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { Star, ShieldCheck, Heart, MapPin, ArrowRight } from "lucide-react";
+import { useEffect } from "react";
+import { getHeroData } from "../api/backend";
 
-const heroData = [
+const heroFallbackData = [
   {
     id: 0,
     img: "/heroimg.png",
@@ -36,12 +38,47 @@ const heroData = [
 
 export const Hero = () => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [heroApiData, setHeroApiData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const activeItem = heroData[activeIndex];
-  const smallItems = heroData.filter((_, index) => index !== activeIndex);
+  /* ---------- FETCH HERO DATA ---------- */
+  useEffect(() => {
+    const fetchHero = async () => {
+      try {
+        const res = await getHeroData();
+        if (res?.success && res?.data?.length) {
+          setHeroApiData(res.data[0]);
+        }
+      } catch (err) {
+        console.error("Hero API failed, using fallback");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchHero();
+  }, []);
+  const heroItems = isLoading
+    ? heroFallbackData
+    : heroApiData?.items?.length > 0
+      ? JSON.parse(heroApiData.items).map((item) => ({
+          id: item.id,
+          img: item.image_url,
+          tag: item.lavel,
+          starText: item.stars,
+          title: item.title,
+          subtitle: item.subtitle,
+          smallTitle: item.title,
+          smallSubtitle: item.subtitle,
+        }))
+      : heroFallbackData;
+
+  const activeItem = heroItems[activeIndex];
+  const smallItems = heroItems.filter((_, i) => i !== activeIndex);
 
   return (
     <section className="relative w-full pt-10 pb-20 lg:pt-20 lg:pb-32 overflow-hidden">
+      {console.log(heroApiData)}
       {/* Background Decorative Elements */}
       <div className="absolute top-0 left-0 w-full h-125 bg-linear-to-b from-[#C9A961]/40 to-transparent opacity-30 pointer-events-none"></div>
       <div className="absolute top-[10%] -left-[10%] w-125 h-125 bg-[#C9A961]/30 blur-[120px] rounded-full pointer-events-none"></div>
@@ -90,16 +127,15 @@ export const Hero = () => {
             {/* Main Headlines */}
             <div className="space-y-6">
               <h1 className="text-6xl md:text-7xl lg:text-[90px] font-black text-white leading-[0.9] tracking-tighter">
-                Thicker is <br />
-                <span className="text-white/90">better.</span>
+                {heroApiData?.main_title || "Thicker is better."}
               </h1>
               <p className="text-2xl md:text-3xl  font-bold text-[#C9A961] max-w-2xl leading-tight">
-                Why choose a 5mm plank when you can get 8.5mm for the same
-                price?
+                {heroApiData?.sub2 ||
+                  "Why choose a 5mm plank when you can get 8.5mm for the same price?"}
               </p>
               <p className="text-lg md:text-xl text-gray-400 font-medium max-w-lg leading-relaxed">
-                Expert flooring & stair installation with real-time pricing and
-                premium materials.
+                {heroApiData?.main_sub_title ||
+                  "Expert flooring & stair installation with real-time pricing and premium materials."}
               </p>
             </div>
 
@@ -107,8 +143,16 @@ export const Hero = () => {
             <div className="flex flex-wrap gap-x-10 gap-y-6 pt-2">
               <TrustBadge
                 icon={<Star className="w-5 h-5 fill-black text-black" />}
-                title="5.0 Rating"
-                subtitle="500+ Projects"
+                title={
+                  heroApiData?.ratings_count
+                    ? `${heroApiData.ratings_count}.0 Rating`
+                    : "5.0 Rating"
+                }
+                subtitle={
+                  heroApiData?.ratings_project_count
+                    ? `${heroApiData.ratings_project_count}+ Projects`
+                    : "500+ Projects"
+                }
               />
               <TrustBadge
                 icon={<ShieldCheck className="w-5 h-5 text-black" />}
@@ -205,7 +249,9 @@ export const Hero = () => {
               {/* Happy Clients Badge */}
               <div className="absolute -left-6 bunch sm:-left-10  ease-linear top-[20%] sm:top-1/4 bg-white px-5 sm:px-8 py-3 sm:py-6 rounded-3xl sm:rounded-4xl shadow-[0_25px_60px_rgba(201,169,97,0.3)] z-40 text-center border border-white/20 transform -rotate-3 hover:rotate-0 transition-all duration-500">
                 <div className="text-2xl sm:text-4xl font-black text-[#C9A961] tracking-tighter leading-none mb-1">
-                  500+
+                  {heroApiData?.ratings_project_count
+                    ? `${heroApiData.ratings_project_count}+`
+                    : "500+"}
                 </div>
                 <div className="text-[8px] sm:text-[10px] text-[#1A1A1A] font-black uppercase tracking-widest leading-none">
                   Happy Clients
@@ -215,7 +261,7 @@ export const Hero = () => {
               {/* Review Card */}
               <div className="absolute -bottom-10 bunch sm:-bottom-6 -right-6 sm:-right-10 bg-white p-4 sm:p-8 rounded-4xl sm:rounded-[2.5rem] shadow-[0_30px_70px_rgba(201,169,97,0.3)] z-40 max-w-45 sm:max-w-70 border border-white/20 transform rotate-2 hover:rotate-0 transition-all duration-500">
                 <div className="flex gap-0.5 mb-2 sm:mb-4">
-                  {[...Array(5)].map((_, i) => (
+                  {[...Array(heroApiData?.quat?.ratings || 5)].map((_, i) => (
                     <Star
                       key={i}
                       className="w-2.5 h-2.5 sm:w-4 sm:h-4 fill-[#C9A961] text-[#C9A961]"
@@ -223,11 +269,12 @@ export const Hero = () => {
                   ))}
                 </div>
                 <p className="text-[#1A1A1A] text-[10px] sm:text-sm font-bold leading-relaxed mb-2 sm:mb-4 italic">
-                  "Outstanding work! Transformed our home beautifully."
+                  {heroApiData?.quat?.text ||
+                    "Outstanding work! Transformed our home beautifully."}
                 </p>
                 <div className="text-[9px] sm:text-[11px] font-black text-black/50 uppercase tracking-widest flex items-center gap-2">
                   <span className="w-3 sm:w-4 h-px bg-black/20"></span>
-                  Sarah M.
+                  {heroApiData?.quat?.user || "Sarah M."}
                 </div>
               </div>
             </div>
