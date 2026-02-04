@@ -48,8 +48,8 @@ class EmailService {
         <body>
           <div class="container">
             <div class="header">
-              <div class="logo">Ayoub Flooring</div>
-              <p style="margin: 10px 0 0 0; font-size: 16px;">Premium Flooring Solutions</p>
+              <img src="https://i.ibb.co.com/nqV1xY21/logo.png" alt="Ayoub Landing" height="50" style="margin-bottom: 10px;">
+              <p style="margin: 10px 0 0 0; font-size: 16px; color: white;">Premium Flooring Solutions</p>
             </div>
             
             <div class="content">
@@ -161,8 +161,8 @@ class EmailService {
         <body>
           <div class="container">
             <div class="header">
-              <div class="logo">Ayoub Flooring</div>
-              <p style="margin: 10px 0 0 0; font-size: 16px;">Your Custom Quote</p>
+              <img src="https://i.ibb.co.com/nqV1xY21/logo.png" alt="Ayoub Landing" height="50" style="margin-bottom: 10px;">
+              <p style="margin: 10px 0 0 0; font-size: 16px; color: white;">Your Custom Quote</p>
             </div>
             
             <div class="content">

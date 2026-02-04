@@ -1,4 +1,4 @@
-import Hero from "./Hero.js";
+import hero from "./Hero.js";
 import User from "./User.js";
 
-export { Hero, User };
+export { hero, User };

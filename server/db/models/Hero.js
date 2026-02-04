@@ -1,8 +1,8 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../sequelize.js";
 
-const Hero = sequelize.define(
-  "Hero",
+const hero = sequelize.define(
+  "hero",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -41,4 +41,4 @@ const Hero = sequelize.define(
   },
 );
 
-export default Hero;
+export default hero;

@@ -2,7 +2,7 @@ import AdminJS, { ComponentLoader } from "adminjs";
 import AdminJSExpress from "@adminjs/express";
 import AdminJSSequelize from "@adminjs/sequelize";
 import bcrypt from "bcrypt";
-import { Hero, User } from "./models/index.js";
+import { hero, User } from "./models/index.js";
 import sequelize from "./sequelize.js";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -32,15 +32,18 @@ export const setupAdmin = (app) => {
     branding: {
       companyName: "Ayoub Landing",
       withMadeWithLove: false,
+      logo: "https://i.ibb.co.com/nqV1xY21/logo.png",
     },
     dashboard: {
       component: dashboardComponent,
     },
+
     componentLoader,
     resources: [
       {
-        resource: Hero,
+        resource: hero,
         options: {
+          id: "hero",
           properties: {
             items: {
               type: "textarea",

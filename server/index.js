@@ -72,6 +72,14 @@ app.use(
     // Initialize default admin
     await createDefaultAdmin();
 
+    // Dedicated admin redirect for the root of admin - MOVED ABOVE setupAdmin
+    app.get("/admin", (req, res) => {
+      return res.redirect("/admin/resources/hero");
+    });
+    app.get("/admin/", (req, res) => {
+      return res.redirect("/admin/resources/hero");
+    });
+
     // Setup Admin.js
     setupAdmin(app);
     console.log("✅ Admin panel initialized at /admin");
