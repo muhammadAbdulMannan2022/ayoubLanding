@@ -17,6 +17,10 @@ const hero = sequelize.define(
       type: DataTypes.TEXT,
       allowNull: false,
     },
+    sub2: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
     ratings_count: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
