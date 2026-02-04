@@ -1,5 +1,4 @@
 import express from "express";
-import jobberService from "../services/jobberService.js";
 import emailService from "../services/emailService.js";
 
 const router = express.Router();
@@ -20,7 +19,6 @@ router.post("/create", async (req, res) => {
       time,
       projectType,
       notes,
-      accessToken,
     } = req.body;
 
     // Validate required fields
@@ -31,140 +29,54 @@ router.post("/create", async (req, res) => {
       });
     }
 
-    let client = null;
-    let visit = null;
-    let jobberSuccess = false;
-
-    // Use provided token or fall back to stored token
-    const token = accessToken || jobberService.accessToken;
-
-    // Only create in Jobber if we have a valid token
-    if (token) {
-      try {
-        // Step 1: Check if client already exists
-        client = await jobberService.getClientByEmail(email, token);
-
-        // Step 2: Create client if doesn't exist
-        if (!client) {
-          const clientData = {
-            firstName,
-            lastName,
-            email,
-            phone,
-            address: address
-              ? {
-                  street1: address.street1 || address,
-                  street2: address.street2 || null,
-                  city: address.city || "",
-                  province: address.province || address.state || "",
-                  postalCode: address.postalCode || address.zip || "",
-                  country: address.country || "US",
-                }
-              : null,
-          };
-
-          client = await jobberService.createClient(clientData, token);
-          console.log(
-            "✅ Jobber Client Created/Found:",
-            client.id,
-            client.name,
-          );
-        } else {
-          console.log("ℹ️  Jobber Client Found:", client.id, client.name);
-        }
-
-        // Step 3: Create visit/appointment
-        let visitData = {
-          clientId: client.id,
-          title: `${projectType || "Flooring"} - Free In-Home Consultation`,
-          anytime: !date || !time,
-          instructions:
-            notes ||
-            `Project Type: ${projectType || "Not specified"}\n\nClient requested a free in-home consultation.`,
-        };
-
-        // If date and time provided, set specific appointment time
-        if (date && time) {
-          const appointmentDate = new Date(date);
-          const [hours, minutes] = time.split(":");
-          appointmentDate.setHours(parseInt(hours), parseInt(minutes), 0);
-
-          visitData.startAt = appointmentDate.toISOString();
-
-          // Set end time to 1 hour after start
-          const endDate = new Date(appointmentDate);
-          endDate.setHours(endDate.getHours() + 1);
-          visitData.endAt = endDate.toISOString();
-        }
-
-        visit = await jobberService.createVisit(visitData, token);
-        console.log(
-          "✅ Jobber Visit Created:",
-          visit.id,
-          "for",
-          visit.startAt || "Anytime",
-        );
-        jobberSuccess = true;
-      } catch (jobberError) {
-        console.error("❌ Jobber API error:", jobberError.message);
-        // Don't continue - wait until Jobber is fixed
-        return res.status(500).json({
-          success: false,
-          error: "Failed to create booking in Jobber: " + jobberError.message,
-          data: { client, visit },
-        });
-      }
-    } else {
-      console.warn(
-        "⚠️  Jobber integration skipped: No access token available. Please authenticate at /api/auth/login",
-      );
-      return res.status(401).json({
-        success: false,
-        error: "Jobber integration not configured. Please authenticate.",
+    // Send confirmation emails
+    try {
+      // Send confirmation to customer
+      await emailService.sendBookingConfirmation({
+        firstName,
+        lastName,
+        email,
+        phone,
+        date,
+        time,
+        projectType,
+        notes,
+        address,
       });
-    }
 
-    // Step 4: Send confirmation emails ONLY AFTER SUCCESSFUL JOBBER CREATION
-    if (jobberSuccess && visit) {
-      try {
-        // Send confirmation to customer
-        await emailService.sendBookingConfirmation({
-          firstName,
-          lastName,
-          email,
-          phone,
-          date,
-          time,
-          projectType,
-          notes,
-          address,
-        });
+      // Send notification to admin
+      await emailService.sendAdminNotification({
+        firstName,
+        lastName,
+        email,
+        phone,
+        date,
+        time,
+        projectType,
+        notes,
+        address,
+      });
 
-        // Send notification to admin
-        await emailService.sendAdminNotification({
-          firstName,
-          lastName,
-          email,
-          phone,
-          date,
-          time,
-          projectType,
-          notes,
-          address,
-        });
-      } catch (emailError) {
-        console.error("Email sending error:", emailError.message);
-        // Don't fail the request if email fails, but log it
-      }
+      console.log("✅ Booking confirmation emails sent to", email);
+    } catch (emailError) {
+      console.error("Email sending error:", emailError.message);
+      return res.status(500).json({
+        success: false,
+        error: "Failed to send confirmation emails: " + emailError.message,
+      });
     }
 
     res.status(201).json({
       success: true,
       message: "Booking created successfully. Confirmation email sent!",
       data: {
-        client,
-        visit,
-        emailSent: jobberSuccess,
+        firstName,
+        lastName,
+        email,
+        phone,
+        date,
+        time,
+        projectType,
       },
     });
   } catch (error) {
