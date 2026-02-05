@@ -94,9 +94,27 @@ export const getHeroData = async () => {
     throw error;
   }
 };
+
+// get reviews data
+export const getReviewsData = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/reviews`, {
+      method: "GET",
+      headers: {
+        "ngrok-skip-browser-warning": "true",
+      },
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching reviews data:", error);
+    throw error;
+  }
+};
 export default {
   createBooking,
   createQuote,
   checkServerHealth,
   getHeroData,
+  getReviewsData,
 };

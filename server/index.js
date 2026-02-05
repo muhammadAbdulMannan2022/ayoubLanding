@@ -6,6 +6,7 @@ import bodyParser from "body-parser";
 import authRoutes from "./routes/auth.js";
 import bookingRoutes from "./routes/bookings.js";
 import heroRoutes from "./routes/hero.js";
+import reviewsRoutes from "./routes/reviews.js";
 import { initializeDatabase } from "./db/database.js";
 import sequelize from "./db/sequelize.js";
 import { setupAdmin, createDefaultAdmin } from "./db/admin.js";
@@ -111,6 +112,7 @@ app.use(express.static(path.join(__dirname, "/public")));
     app.use("/api/auth", authRoutes);
     app.use("/api/bookings", bookingRoutes);
     app.use("/api/hero", heroRoutes);
+    app.use("/api/reviews", reviewsRoutes);
     // app.use("/api/jobber", jobberRoutes);
 
     // Root endpoint
