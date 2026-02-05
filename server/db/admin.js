@@ -2,7 +2,7 @@ import AdminJS, { ComponentLoader } from "adminjs";
 import AdminJSExpress from "@adminjs/express";
 import AdminJSSequelize from "@adminjs/sequelize";
 import bcrypt from "bcrypt";
-import { hero, User } from "./models/index.js";
+import { hero, reviews, User } from "./models/index.js";
 import sequelize from "./sequelize.js";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -100,6 +100,65 @@ export const setupAdmin = (app) => {
               isVisible: true,
             },
             list: {
+              isVisible: true,
+            },
+          },
+        },
+      },
+      {
+        resource: reviews,
+        options: {
+          id: "reviews",
+          properties: {
+            id: {
+              isVisible: {
+                list: true,
+                filter: true,
+                show: true,
+                edit: false,
+              },
+            },
+            rating: {
+              type: "number",
+              props: {
+                min: 1,
+                max: 5,
+              },
+            },
+            text: {
+              type: "textarea",
+              props: {
+                rows: 6,
+              },
+            },
+            user: {
+              type: "string",
+            },
+            createdAt: {
+              isVisible: {
+                edit: false,
+              },
+            },
+            updatedAt: {
+              isVisible: {
+                edit: false,
+              },
+            },
+          },
+          actions: {
+            new: {
+              isVisible: true,
+            },
+            edit: {
+              isVisible: true,
+            },
+            delete: {
+              isVisible: true,
+            },
+            list: {
+              isVisible: true,
+            },
+            show: {
               isVisible: true,
             },
           },

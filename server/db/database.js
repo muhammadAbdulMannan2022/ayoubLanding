@@ -30,10 +30,45 @@ db.run(`
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )
 `);
+db.run(`
+  CREATE TABLE IF NOT EXISTS reviews (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    rating INTEGER NOT NULL,
+    text TEXT NOT NULL,
+    user TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+`);
 
 // =====================
 // INIT / SEED DATABASE
 // =====================
+const seedReviews = () => {
+  db.get("SELECT COUNT(*) as count FROM reviews", [], (err, row) => {
+    if (err || row.count > 0) return;
+
+    const reviews = [
+      { rating: 5, text: "Amazing quality and fast install!", user: "John D." },
+      {
+        rating: 5,
+        text: "Super clean finish. Highly recommend.",
+        user: "Emily R.",
+      },
+      { rating: 4, text: "Great work, very professional.", user: "Mike T." },
+    ];
+
+    reviews.forEach((r) => {
+      db.run(`INSERT INTO reviews (rating, text, user) VALUES (?, ?, ?)`, [
+        r.rating,
+        r.text,
+        r.user,
+      ]);
+    });
+
+    console.log("✅ Reviews seeded");
+  });
+};
 export const initializeDatabase = () => {
   return new Promise((resolve, reject) => {
     db.get("SELECT COUNT(*) as count FROM hero", [], (err, row) => {
@@ -85,6 +120,8 @@ export const initializeDatabase = () => {
         ],
       };
 
+      seedReviews();
+
       db.run(
         `
         INSERT INTO hero (
@@ -113,6 +150,18 @@ export const initializeDatabase = () => {
         },
       );
     });
+  });
+};
+export const getAllReviews = () => {
+  return new Promise((resolve, reject) => {
+    db.all(
+      "SELECT * FROM reviews ORDER BY created_at DESC",
+      [],
+      (err, rows) => {
+        if (err) return reject(err);
+        resolve(rows);
+      },
+    );
   });
 };
 
