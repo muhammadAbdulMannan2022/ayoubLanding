@@ -60,21 +60,65 @@ export const Hero = () => {
   }, []);
   const heroItems = isLoading
     ? heroFallbackData
-    : heroApiData?.items?.length > 0
-      ? JSON.parse(heroApiData.items).map((item) => ({
-          id: item.id,
-          img: item.image_url,
-          tag: item.lavel,
-          starText: item.stars,
-          title: item.title,
-          subtitle: item.subtitle,
-          smallTitle: item.title,
-          smallSubtitle: item.subtitle,
-        }))
+    : heroApiData?.items
+      ? (() => {
+          let items = heroApiData.items;
+          // Robust parsing for double-stringified data
+          while (typeof items === "string" && (items.startsWith("[") || items.startsWith("\""))) {
+            try {
+              const parsed = JSON.parse(items);
+              if (typeof parsed === "string" || Array.isArray(parsed)) {
+                items = parsed;
+              } else {
+                break;
+              }
+              if (Array.isArray(items)) break;
+            } catch (e) {
+              break;
+            }
+          }
+          if (Array.isArray(items)) {
+            return items.map((item) => ({
+              id: item.id,
+              img: item.image_url,
+              tag: item.lavel,
+              starText: item.stars,
+              title: item.title,
+              subtitle: item.subtitle,
+              smallTitle: item.title,
+              smallSubtitle: item.subtitle,
+            }));
+          }
+          return heroFallbackData;
+        })()
       : heroFallbackData;
 
   const activeItem = heroItems[activeIndex];
   const smallItems = heroItems.filter((_, i) => i !== activeIndex);
+
+  const heroQuat = (() => {
+    let quat = heroApiData?.quat;
+    while (typeof quat === "string" && (quat.startsWith("{") || quat.startsWith("\""))) {
+      try {
+        const parsed = JSON.parse(quat);
+        if (typeof parsed === "string" || (typeof parsed === "object" && parsed !== null)) {
+          quat = parsed;
+        } else {
+          break;
+        }
+        if (typeof quat === "object" && quat !== null) break;
+      } catch (e) {
+        break;
+      }
+    }
+    return (
+      quat || {
+        ratings: 5,
+        text: "Outstanding work! Transformed our home beautifully.",
+        user: "Sarah M.",
+      }
+    );
+  })();
 
   return (
     <section className="relative w-full pt-10 pb-20 lg:pt-20 lg:pb-32 overflow-hidden">
@@ -261,7 +305,7 @@ export const Hero = () => {
               {/* Review Card */}
               <div className="absolute -bottom-10 bunch sm:-bottom-6 -right-6 sm:-right-10 bg-white p-4 sm:p-8 rounded-4xl sm:rounded-[2.5rem] shadow-[0_30px_70px_rgba(201,169,97,0.3)] z-40 max-w-45 sm:max-w-70 border border-white/20 transform rotate-2 hover:rotate-0 transition-all duration-500">
                 <div className="flex gap-0.5 mb-2 sm:mb-4">
-                  {[...Array(heroApiData?.quat?.ratings || 5)].map((_, i) => (
+                  {[...Array(heroQuat?.ratings || 5)].map((_, i) => (
                     <Star
                       key={i}
                       className="w-2.5 h-2.5 sm:w-4 sm:h-4 fill-[#C9A961] text-[#C9A961]"
@@ -269,12 +313,12 @@ export const Hero = () => {
                   ))}
                 </div>
                 <p className="text-[#1A1A1A] text-[10px] sm:text-sm font-bold leading-relaxed mb-2 sm:mb-4 italic">
-                  {heroApiData?.quat?.text ||
+                  {heroQuat?.text ||
                     "Outstanding work! Transformed our home beautifully."}
                 </p>
                 <div className="text-[9px] sm:text-[11px] font-black text-black/50 uppercase tracking-widest flex items-center gap-2">
                   <span className="w-3 sm:w-4 h-px bg-black/20"></span>
-                  {heroApiData?.quat?.user || "Sarah M."}
+                  {heroQuat?.user || "Sarah M."}
                 </div>
               </div>
             </div>

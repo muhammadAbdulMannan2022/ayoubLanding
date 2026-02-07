@@ -1,4 +1,4 @@
-import AdminJS, { ComponentLoader } from "adminjs";
+import AdminJS, { ComponentLoader, flat } from "adminjs";
 import AdminJSExpress from "@adminjs/express";
 import AdminJSSequelize from "@adminjs/sequelize";
 import bcrypt from "bcrypt";
@@ -47,30 +47,119 @@ export const setupAdmin = (app) => {
           id: "hero",
           properties: {
             items: {
-              type: "textarea",
-              props: {
-                rows: 10,
-              },
+              type: "mixed",
+              isArray: true,
             },
+            "items.id": { type: "number", label: "ID" },
+            "items.image_url": { type: "string", label: "Image URL" },
+            "items.lavel": { type: "string", label: "Label (Tag)" },
+            "items.stars": { type: "string", label: "Review Text/Stars" },
+            "items.title": { type: "string", label: "Title" },
+            "items.subtitle": { type: "string", label: "Subtitle" },
             quat: {
-              type: "textarea",
-              props: {
-                rows: 5,
-              },
+              type: "mixed",
+              label: "Review Quote",
             },
+            "quat.ratings": { type: "number", label: "Rating (1-5)" },
+            "quat.text": { type: "textarea", label: "Quote Text" },
+            "quat.user": { type: "string", label: "User Name" },
           },
           actions: {
             new: {
               isVisible: true,
+              before: async (request) => {
+                if (request.payload) {
+                  // AdminJS sends flattened data like items.0.title
+                  // We can unflatten it to get a clean object/array structure
+                  request.payload = flat.unflatten(request.payload);
+                }
+                return request;
+              },
             },
             edit: {
               isVisible: true,
+              before: async (request) => {
+                if (request.method === "post" && request.payload) {
+                  request.payload = flat.unflatten(request.payload);
+                }
+                return request;
+              },
+              after: async (response) => {
+                if (response.record?.params) {
+                  try {
+                    let items = response.record.params.items;
+                    let quat = response.record.params.quat;
+
+                    if (typeof items === "string") {
+                      items = JSON.parse(items);
+                    }
+                    if (typeof quat === "string") {
+                      quat = JSON.parse(quat);
+                    }
+
+                    // Replace the params with a flattened version of the record
+                    // This ensures keys like items.0.title are present for the UI
+                    const newParams = {
+                      ...response.record.params,
+                      items,
+                      quat,
+                    };
+                    response.record.params = flat.flatten(newParams);
+                  } catch (e) {
+                    console.error("Error in edit after hook:", e);
+                  }
+                }
+                return response;
+              },
             },
-            delete: {
-              isVisible: true,
-            },
+            delete: { isVisible: true },
             list: {
               isVisible: true,
+              after: async (response) => {
+                response.records.forEach((record) => {
+                  try {
+                    let items = record.params.items;
+                    let quat = record.params.quat;
+
+                    if (typeof items === "string") {
+                      items = JSON.parse(items);
+                    }
+                    if (typeof quat === "string") {
+                      quat = JSON.parse(quat);
+                    }
+
+                    const newParams = { ...record.params, items, quat };
+                    record.params = flat.flatten(newParams);
+                  } catch (e) {}
+                });
+                return response;
+              },
+            },
+            show: {
+              isVisible: true,
+              after: async (response) => {
+                if (response.record?.params) {
+                  try {
+                    let items = response.record.params.items;
+                    let quat = response.record.params.quat;
+
+                    if (typeof items === "string") {
+                      items = JSON.parse(items);
+                    }
+                    if (typeof quat === "string") {
+                      quat = JSON.parse(quat);
+                    }
+
+                    const newParams = {
+                      ...response.record.params,
+                      items,
+                      quat,
+                    };
+                    response.record.params = flat.flatten(newParams);
+                  } catch (e) {}
+                }
+                return response;
+              },
             },
           },
         },

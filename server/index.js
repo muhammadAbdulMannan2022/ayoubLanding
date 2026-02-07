@@ -43,7 +43,7 @@ app.use(
 
       const allowedOrigins = [
         process.env.FRONTEND_URL || "http://localhost:5173",
-        "https://famous-gumption-1b30e9.netlify.app" || "http://localhost:5000",
+        "https://e56b-103-186-20-3.ngrok-free.app" || "http://localhost:5000",
       ];
 
       // Allow localhost in dev

@@ -263,7 +263,7 @@ export const updateHero = (id, data) => {
         ratings_count,
         ratings_project_count,
         typeof quat === "string" ? quat : JSON.stringify(quat),
-        JSON.stringify(items),
+        typeof items === "string" ? items : JSON.stringify(items),
         id,
       ],
       function (err) {
