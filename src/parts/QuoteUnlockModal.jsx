@@ -3,14 +3,14 @@ import { X, Lock, CheckCircle2, ShieldCheck, Mail, Loader2, AlertCircle } from "
 import { createQuote } from "../api/backend";
 import { useNavigate } from "react-router";
 
-const QuoteUnlockModal = ({ isOpen, onClose, projectData }) => {
+const QuoteUnlockModal = ({ isOpen, onClose, projectData, initialData, onUnlocked, setBookingUserData }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    phone: ""
+    fullName: initialData?.fullName || "",
+    email: initialData?.email || "",
+    phone: initialData?.phone || ""
   });
 
   if (!isOpen) return null;
@@ -80,9 +80,17 @@ const QuoteUnlockModal = ({ isOpen, onClose, projectData }) => {
 
       console.log('Quote sent successfully:', result);
 
+      // Update parent state with user data for booking pre-fill
+      if (setBookingUserData) {
+        setBookingUserData(formData);
+      }
+
+      // Call onUnlocked callback
+      if (onUnlocked) onUnlocked();
+
       // Close modal and navigate to success page
       onClose();
-      navigate("/thankyouformsubmitted");
+      // navigate("/thankyouformsubmitted");
 
     } catch (error) {
       console.error('Quote generation error:', error);

@@ -122,7 +122,6 @@ export const Hero = () => {
 
   return (
     <section className="relative w-full pt-10 pb-20 lg:pt-20 lg:pb-32 overflow-hidden">
-      {console.log(heroApiData)}
       {/* Background Decorative Elements */}
       <div className="absolute top-0 left-0 w-full h-125 bg-linear-to-b from-[#C9A961]/40 to-transparent opacity-30 pointer-events-none"></div>
       <div className="absolute top-[10%] -left-[10%] w-125 h-125 bg-[#C9A961]/30 blur-[120px] rounded-full pointer-events-none"></div>

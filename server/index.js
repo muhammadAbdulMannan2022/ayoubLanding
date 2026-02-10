@@ -3,7 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
-import authRoutes from "./routes/auth.js";
+// import authRoutes from "./routes/auth.js";
 import bookingRoutes from "./routes/bookings.js";
 import heroRoutes from "./routes/hero.js";
 import reviewsRoutes from "./routes/reviews.js";
@@ -84,6 +84,20 @@ app.use(express.static(path.join(__dirname, "/public")));
       return res.redirect("/admin/resources/hero");
     });
 
+    // FIX: AdminJS Deletion Error ("bad content-type header, no content-type")
+    // Some requests (like bulk deletes) might miss the Content-Type header, causing formidable to crash.
+    app.use("/admin", (req, res, next) => {
+      if (
+        (req.method === "POST" ||
+          req.method === "PUT" ||
+          req.method === "DELETE") &&
+        !req.headers["content-type"]
+      ) {
+        req.headers["content-type"] = "application/x-www-form-urlencoded";
+      }
+      next();
+    });
+
     // Setup Admin.js
     setupAdmin(app);
     console.log("✅ Admin panel initialized at /admin");
@@ -109,7 +123,7 @@ app.use(express.static(path.join(__dirname, "/public")));
     });
 
     // API Routes
-    app.use("/api/auth", authRoutes);
+    // app.use("/api/auth", authRoutes);
     app.use("/api/bookings", bookingRoutes);
     app.use("/api/hero", heroRoutes);
     app.use("/api/reviews", reviewsRoutes);

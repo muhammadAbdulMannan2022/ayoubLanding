@@ -2,7 +2,7 @@ import AdminJS, { ComponentLoader, flat } from "adminjs";
 import AdminJSExpress from "@adminjs/express";
 import AdminJSSequelize from "@adminjs/sequelize";
 import bcrypt from "bcrypt";
-import { hero, reviews, User } from "./models/index.js";
+import { hero, reviews, User, Booking, Quote } from "./models/index.js";
 import sequelize from "./sequelize.js";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -250,6 +250,28 @@ export const setupAdmin = (app) => {
             show: {
               isVisible: true,
             },
+          },
+        },
+      },
+      {
+        resource: Booking,
+        options: {
+          navigation: { name: "Prospects", icon: "Calendar" },
+          properties: {
+            notes: { type: "textarea" },
+            id: { isVisible: { list: false, filter: true, show: true, edit: false } },
+          },
+        },
+      },
+      {
+        resource: Quote,
+        options: {
+          navigation: { name: "Prospects", icon: "Calculator" },
+          properties: {
+            stairDetails: { type: "mixed" },
+            floorDetails: { type: "mixed" },
+            pdfUrl: { type: "string", components: { show: "DownloadButton" } },
+            id: { isVisible: { list: false, filter: true, show: true, edit: false } },
           },
         },
       },

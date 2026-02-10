@@ -24,6 +24,9 @@ export const ProjectConfigurator = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPreModalOpen, setIsPreModalOpen] = useState(false);
   const [isUnlockModalOpen, setIsUnlockModalOpen] = useState(false);
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [pendingQuoteUnlock, setPendingQuoteUnlock] = useState(false);
+  const [bookingUserData, setBookingUserData] = useState(null);
   const [stairData, setStairData] = useState({
     steps: "0",
     landings: "0",
@@ -266,18 +269,36 @@ export const ProjectConfigurator = () => {
 
       {/* Completion Buttons */}
       <div className="space-y-3 pt-12">
-        <button
-          onClick={() => setIsUnlockModalOpen(true)}
-          className="w-full py-5 bg-[#C9A961] text-white hover:cursor-pointer font-black rounded-xl transition-all"
-        >
-          Complete All Steps to Continue
-        </button>
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="w-full py-5 bg-[#ffffff] border hover:cursor-pointer border-[#C9A961] text-[#C9A961]  rounded-xl transition-all font-black"
-        >
-          Skip to Schedule
-        </button>
+        {!isUnlocked ? (
+          <button
+            onClick={() => {
+              setIsUnlockModalOpen(true);
+            }}
+            className="w-full py-5 bg-[#C9A961] text-white hover:cursor-pointer font-black rounded-xl transition-all"
+          >
+            View Price & Get PDF Quote
+          </button>
+        ) : (
+          <button
+            onClick={() => {
+              setIsModalOpen(true);
+            }}
+            className="w-full py-5 bg-[#C9A961] text-white hover:cursor-pointer font-black rounded-xl transition-all"
+          >
+            Complete All Steps to Continue
+          </button>
+        )}
+        {!isUnlocked && (
+          <button
+            onClick={() => {
+              setPendingQuoteUnlock(false);
+              setIsModalOpen(true);
+            }}
+            className="w-full py-5 bg-[#ffffff] border hover:cursor-pointer border-[#C9A961] text-[#C9A961]  rounded-xl transition-all font-black"
+          >
+            Skip to Schedule
+          </button>
+        )}
       </div>
     </div>
   );
@@ -361,8 +382,12 @@ export const ProjectConfigurator = () => {
               <FloorDetailsForm
                 data={floorData}
                 onChange={setFloorData}
-                onComplete={() => setIsUnlockModalOpen(true)}
-                onSkip={() => setIsModalOpen(true)}
+                onComplete={() => {
+                  // Stay on page, user uses sidebar buttons
+                }}
+                onSkip={() => {
+                  setIsModalOpen(true);
+                }}
               />
             )}
             {selectedType === "both" && (
@@ -370,8 +395,12 @@ export const ProjectConfigurator = () => {
                 <FloorDetailsForm
                   data={floorData}
                   onChange={setFloorData}
-                  onComplete={() => setIsUnlockModalOpen(true)}
-                  onSkip={() => setIsModalOpen(true)}
+                  onComplete={() => {
+                    // Stay on page
+                  }}
+                  onSkip={() => {
+                    setIsModalOpen(true);
+                  }}
                 />
                 <div className="h-px bg-gray-100"></div>
                 <StairDetailsForm />
@@ -381,10 +410,62 @@ export const ProjectConfigurator = () => {
 
           {/* Right Side: Summary Widgets */}
           <div className="w-full lg:w-100 space-y-6 lg:sticky lg:top-32">
+            {/* Schedule Help Card */}
+            <div className="bg-white p-8 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] space-y-6 group border border-[#C9A961]/20">
+              <div className="flex items-start gap-4">
+                <div className="p-3 bg-[#C9A961]/10 rounded-2xl flex-shrink-0">
+                  <Home className="w-6 h-6 text-[#C9A961]" />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="text-xl font-black text-black leading-tight">
+                    Prefer an In-Home Visit?
+                  </h4>
+                  <p className="text-xs text-gray-400 font-medium leading-relaxed">
+                    Don't have all the details? We'll visit your home for free
+                    and provide an exact quote.
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="w-full py-4 bg-[#1A1A1A] text-white font-black rounded-xl hover:bg-black transition-all flex items-center justify-center gap-2 shadow-lg"
+              >
+                <Calendar className="w-5 h-5" />
+                Schedule Free In-Home Quote
+              </button>
+            </div>
+
+            {/* Live Selection Preview Image */}
+            <div className="relative group rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl aspect-square sm:aspect-video flex items-center justify-center bg-gray-100">
+               <img 
+                 src={
+                   selectedType === 'stairs' ? '/heroimg2.jpg' : 
+                   selectedType === 'floor' ? '/heroimg.png' :
+                   selectedType === 'both' ? '/heroimg.png' : 
+                   '/heroimg2.jpg'
+                 } 
+                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                 alt="Project Preview" 
+               />
+               <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent"></div>
+               <div className="absolute bottom-6 left-6 right-6 flex flex-col items-start gap-1">
+                  <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20">
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#C9A961] animate-pulse"></div>
+                    <span className="text-[10px] font-black text-white uppercase tracking-[0.2em]">Live Preview</span>
+                  </div>
+                  <h4 className="text-2xl font-black text-white tracking-tight">
+                    {selectedType === 'stairs' ? 'Stairs Only' : 
+                     selectedType === 'floor' ? 'Floor Only' :
+                     selectedType === 'both' ? 'Floor & Stairs' : 
+                     'Select a project'}
+                  </h4>
+               </div>
+            </div>
+
             {/* Custom Quote Card */}
-            {selectedType === "stairs" ||
+            {(selectedType === "stairs" ||
             selectedType === "both" ||
-            (selectedType === "floor" && floorData.sqft > 0) ? (
+            (selectedType === "floor" && floorData.sqft > 0)) && (
               <div className="bg-[#1A1A1A] p-8 rounded-[2.5rem] shadow-2xl space-y-8 relative overflow-hidden group border border-white/5 animate-in zoom-in-95 duration-500">
                 <div className="flex items-center gap-2">
                   <div className="w-1 h-3 bg-[#C9A961] rounded-full"></div>
@@ -396,31 +477,47 @@ export const ProjectConfigurator = () => {
                 <div className="bg-black/40 rounded-3xl p-8 text-center border border-white/5 relative overflow-hidden">
                   <div className="absolute inset-0 bg-linear-to-b from-[#C9A961]/5 to-transparent pointer-events-none"></div>
                   <div className="flex flex-col items-center">
-                    <span className="text-[10px] font-black text-[#C9A961] uppercase tracking-[0.2em] mb-2">
-                      Total Estimate
-                    </span>
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-4xl font-black text-white">
-                        $
-                        {totalEstimate.toLocaleString(undefined, {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })}
-                      </span>
-                    </div>
-                    <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest mt-4 flex items-center gap-2">
-                      <CheckCircle2 className="w-3 h-3 text-green-500" />
-                      Professional Pricing Ready
-                    </p>
+                    {!isUnlocked ? (
+                      <>
+                        <div className="w-16 h-16 rounded-full bg-[#C9A961] flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(201,169,97,0.4)]">
+                          <Lock className="w-8 h-8 text-black" />
+                        </div>
+                        <h4 className="text-2xl font-black text-white tracking-tight mb-1">
+                          Price Ready!
+                        </h4>
+                        <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest">
+                          Unlock to view your personalized quote
+                        </p>
+                      </>
+                    ) : (
+                      <div className="animate-in zoom-in-95 duration-500">
+                        <span className="text-[10px] font-black text-[#C9A961] uppercase tracking-[0.2em] mb-2">
+                          Total Estimate
+                        </span>
+                        <div className="flex items-baseline gap-1">
+                          <span className="text-4xl font-black text-white">
+                            $
+                            {totalEstimate.toLocaleString(undefined, {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            })}
+                          </span>
+                        </div>
+                        <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest mt-4 flex items-center gap-2">
+                          <CheckCircle2 className="w-3 h-3 text-green-500" />
+                          Professional Pricing Ready
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
 
                 <div className="space-y-3 pt-4 border-t border-white/5">
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-white/40 font-medium">
+                    <span className="text-white/40 font-medium text-xs">
                       Project Type
                     </span>
-                    <span className="text-white font-black">
+                    <span className="text-white font-black text-xs">
                       {selectedType === "stairs"
                         ? "Stairs Only"
                         : selectedType === "floor"
@@ -432,18 +529,18 @@ export const ProjectConfigurator = () => {
                   {(selectedType === "floor" || selectedType === "both") && (
                     <>
                       <div className="flex justify-between items-center text-sm">
-                        <span className="text-white/40 font-medium">
+                        <span className="text-white/40 font-medium text-xs">
                           Total Area
                         </span>
-                        <span className="text-[#C9A961] font-black">
+                        <span className="text-[#C9A961] font-black text-xs">
                           {floorData.sqft || 0} SQFT
                         </span>
                       </div>
                       <div className="flex justify-between items-center text-sm">
-                        <span className="text-white/40 font-medium">
+                        <span className="text-white/40 font-medium text-xs">
                           Room Count
                         </span>
-                        <span className="text-white font-black">
+                        <span className="text-white font-black text-xs">
                           {floorData.roomCount} Rooms
                         </span>
                       </div>
@@ -453,19 +550,19 @@ export const ProjectConfigurator = () => {
                   {(selectedType === "stairs" || selectedType === "both") && (
                     <>
                       <div className="flex justify-between items-center text-sm">
-                        <span className="text-white/40 font-medium">
+                        <span className="text-white/40 font-medium text-xs">
                           Steps (Straight)
                         </span>
-                        <span className="text-white font-black">
+                        <span className="text-white font-black text-xs">
                           {stairData.steps}
                         </span>
                       </div>
                       <div className="flex justify-between items-center text-sm">
-                        <span className="text-white/40 font-medium">
-                          Landings/Box
+                        <span className="text-white/40 font-medium text-xs">
+                          Landings
                         </span>
-                        <span className="text-white font-black">
-                          {stairData.landings} / {stairData.boxSteps}
+                        <span className="text-white font-black text-xs">
+                          {stairData.landings}
                         </span>
                       </div>
                     </>
@@ -475,18 +572,41 @@ export const ProjectConfigurator = () => {
                 <div className="space-y-4 pt-4">
                   <div className="flex items-center gap-2 text-[10px] font-black text-[#C9A961] uppercase tracking-widest">
                     <Tag className="w-3.5 h-3.5" />
-                    Instant PDF Breakdown Ready
+                    Get Your Price & PDF Quote
                   </div>
-                  <button
-                    onClick={() => setIsUnlockModalOpen(true)}
-                    className="w-full py-5 bg-[#C9A961] hover:bg-[#B69752] text-black font-black rounded-2xl transition-all shadow-xl flex items-center justify-center gap-3 group"
-                  >
-                    <FileText className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                    View Price & Get PDF Quote
-                  </button>
+                  {!isUnlocked ? (
+                    <button
+                      onClick={() => {
+                        setIsUnlockModalOpen(true);
+                      }}
+                      className="w-full py-5 bg-[#C9A961] hover:bg-[#B69752] text-black font-black rounded-2xl transition-all shadow-xl flex flex-col items-center justify-center group"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Phone className="w-5 h-5 text-black" />
+                        <span className="text-black font-black">View Price & Get PDF Quote</span>
+                      </div>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        setIsModalOpen(true);
+                      }}
+                      className="w-full py-5 bg-[#C9A961] hover:bg-[#B69752] text-black font-black rounded-2xl transition-all shadow-xl flex flex-col items-center justify-center group"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Calendar className="w-5 h-5 text-black" />
+                        <span className="text-black font-black">Complete All Steps to Continue</span>
+                      </div>
+                    </button>
+                  )}
+                    <p className="text-[9px] text-white/40 font-medium text-center px-4">
+                      Provide your email to instantly view pricing and receive your detailed PDF quote
+                    </p>
                 </div>
               </div>
-            ) : (
+            )}
+
+            {!selectedType && (
               /* Live Estimate Card (Original) */
               <div className="bg-white border border-gray-100 p-8 rounded-[2.5rem] shadow-[0_30px_60px_-12px_rgba(0,0,0,0.1)] relative overflow-hidden group">
                 <div className="absolute top-0 right-0 p-8">
@@ -531,29 +651,6 @@ export const ProjectConfigurator = () => {
               </div>
             )}
 
-            {/* Schedule Help Card */}
-            <div className="bg-white p-8 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] space-y-6 group border border-gray-100">
-              <div className="flex items-start gap-4">
-                <div className="p-3 bg-[#C9A961]/10 rounded-2xl">
-                  <Calendar className="w-6 h-6 text-[#C9A961]" />
-                </div>
-                <div className="space-y-1">
-                  <h4 className="text-xl font-black text-black leading-tight">
-                    Need a professional <br /> on-site?
-                  </h4>
-                  <p className="text-sm text-gray-400 font-medium leading-relaxed">
-                    We'll visit for free, measure everything, and bring samples.
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="w-full py-4 bg-gray-50 border border-gray-100 text-black font-black rounded-xl hover:bg-gray-100 transition-all flex items-center justify-center gap-2"
-              >
-                Book Free Visit
-              </button>
-            </div>
-
             {/* Local Badge */}
             <div className="flex items-center justify-center gap-3 py-4 border border-gray-100 rounded-2xl bg-gray-50/50">
               <MapPin className="w-4 h-4 text-[#C9A961]" />
@@ -567,13 +664,27 @@ export const ProjectConfigurator = () => {
 
       <BookingModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        initialData={{ type: selectedType }}
+        onClose={() => {
+          setIsModalOpen(false);
+          setPendingQuoteUnlock(false);
+        }}
+        initialData={{ ...bookingUserData, type: selectedType }}
+        shouldNavigate={!pendingQuoteUnlock}
+        onComplete={(data) => {
+          if (pendingQuoteUnlock) {
+            setBookingUserData(data);
+            setIsUnlockModalOpen(true);
+            setPendingQuoteUnlock(false);
+          }
+        }}
       />
 
       <QuoteUnlockModal
         isOpen={isUnlockModalOpen}
         onClose={() => setIsUnlockModalOpen(false)}
+        initialData={bookingUserData}
+        onUnlocked={() => setIsUnlocked(true)}
+        setBookingUserData={setBookingUserData}
         projectData={{
           type: selectedType,
           stairDetails: stairData,

@@ -1,5 +1,10 @@
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config();
 
@@ -133,13 +138,23 @@ class EmailService {
   /**
    * Send quote email to customer
    */
-  async sendQuoteEmail(quoteData) {
+  async sendQuoteEmail(quoteData, pdfPath = null) {
     const { email, firstName, projectType, totalEstimate, stairDetails, floorDetails } = quoteData;
+
+    const attachments = [];
+    if (pdfPath) {
+      const fullPath = path.join(__dirname, '../public', pdfPath);
+      attachments.push({
+        filename: 'Your_Flooring_Quote.pdf',
+        path: fullPath
+      });
+    }
 
     const mailOptions = {
       from: process.env.EMAIL_FROM,
       to: email,
       subject: '💰 Your Custom Flooring Quote is Ready!',
+      attachments,
       html: `
         <!DOCTYPE html>
         <html>

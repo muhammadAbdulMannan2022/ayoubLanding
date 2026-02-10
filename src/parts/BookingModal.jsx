@@ -18,7 +18,7 @@ import {
 import { useNavigate } from "react-router";
 import { createBooking } from "../api/backend";
 
-const BookingModal = ({ isOpen, onClose, initialData, onComplete }) => {
+const BookingModal = ({ isOpen, onClose, initialData, onComplete, shouldNavigate = true }) => {
   const navigate = useNavigate();
   const [step, setStep] = useState("date");
   const [selectedDate, setSelectedDate] = useState(null);
@@ -26,10 +26,10 @@ const BookingModal = ({ isOpen, onClose, initialData, onComplete }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
-    address: "",
+    fullName: initialData?.fullName || "",
+    email: initialData?.email || "",
+    phone: initialData?.phone || "",
+    address: initialData?.address || "",
     projectType: initialData?.type || "not_sure",
     notes: "",
   });
@@ -152,8 +152,10 @@ const BookingModal = ({ isOpen, onClose, initialData, onComplete }) => {
       // Close modal
       onClose();
 
-      // Navigate to thank you page
-      navigate("/thankyoumeeting");
+      // Navigate to thank you page ONLY if shouldNavigate is true
+      if (shouldNavigate) {
+        navigate("/thankyoumeeting");
+      }
     } catch (error) {
       console.error("Booking submission error:", error);
       setError(error.message || "Failed to create booking. Please try again.");

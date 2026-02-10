@@ -1,5 +1,7 @@
 import express from "express";
 import emailService from "../services/emailService.js";
+import { Booking, Quote } from "../db/models/index.js";
+import { generateQuotePDF } from "../services/pdfService.js";
 
 const router = express.Router();
 
@@ -28,6 +30,19 @@ router.post("/create", async (req, res) => {
         error: "Missing required fields: firstName, lastName, email, phone",
       });
     }
+
+    // CREATE DATABASE RECORD
+    const booking = await Booking.create({
+      firstName,
+      lastName,
+      email,
+      phone,
+      address,
+      date,
+      time,
+      projectType,
+      notes,
+    });
 
     // Send confirmation emails
     try {
@@ -60,24 +75,13 @@ router.post("/create", async (req, res) => {
       console.log("✅ Booking confirmation emails sent to", email);
     } catch (emailError) {
       console.error("Email sending error:", emailError.message);
-      return res.status(500).json({
-        success: false,
-        error: "Failed to send confirmation emails: " + emailError.message,
-      });
+      // We don't return 500 here because the database record WAS created
     }
 
     res.status(201).json({
       success: true,
       message: "Booking created successfully. Confirmation email sent!",
-      data: {
-        firstName,
-        lastName,
-        email,
-        phone,
-        date,
-        time,
-        projectType,
-      },
+      data: booking,
     });
   } catch (error) {
     console.error("Booking creation error:", error);
@@ -95,96 +99,53 @@ router.post("/create", async (req, res) => {
 router.post("/quote", async (req, res) => {
   try {
     const {
-      clientId,
       email,
-      firstName,
+      fullName,
+      firstName: providedFirstName,
+      lastName: providedLastName,
       projectType,
       stairDetails,
       floorDetails,
       totalEstimate,
-      accessToken,
     } = req.body;
 
-    // Build line items based on project details
-    const lineItems = [];
-    let quoteMessage =
-      "Thank you for your interest in our flooring services!\n\n";
-
-    if (projectType === "stairs" || projectType === "both") {
-      quoteMessage += `**Stair Details:**\n`;
-      quoteMessage += `- Steps: ${stairDetails?.steps || 0}\n`;
-      quoteMessage += `- Landings: ${stairDetails?.landings || 0}\n`;
-      quoteMessage += `- Box Steps: ${stairDetails?.boxSteps || 0}\n`;
-      quoteMessage += `- Material: ${stairDetails?.material || "LVP 5mm or thicker"}\n\n`;
-
-      if (stairDetails?.steps > 0) {
-        lineItems.push({
-          name: "Stair Steps Installation",
-          description: `${stairDetails.steps} steps with ${stairDetails.material}`,
-          quantity: parseInt(stairDetails.steps),
-          unitCost: 135.0,
-        });
-      }
-
-      if (stairDetails?.landings > 0) {
-        lineItems.push({
-          name: "Landing Installation",
-          description: "Landing flooring installation",
-          quantity: parseInt(stairDetails.landings),
-          unitCost: 200.0,
-        });
-      }
-
-      if (stairDetails?.boxSteps > 0) {
-        lineItems.push({
-          name: "Box Steps Installation",
-          description: "Box step flooring installation",
-          quantity: parseInt(stairDetails.boxSteps),
-          unitCost: 250.0,
-        });
-      }
+    // Handle name input variations
+    let firstName = providedFirstName;
+    let lastName = providedLastName;
+    
+    if (fullName && (!firstName || !lastName)) {
+      const parts = fullName.split(" ");
+      firstName = parts[0];
+      lastName = parts.slice(1).join(" ");
     }
 
-    if (projectType === "floor" || projectType === "both") {
-      quoteMessage += `**Floor Details:**\n`;
-      quoteMessage += `- Total Area: ${floorDetails?.sqft || 0} sqft\n`;
-      quoteMessage += `- Rooms: ${floorDetails?.roomCount || 1}\n`;
-      quoteMessage += `- Material: ${floorDetails?.material || "Not specified"}\n`;
-      quoteMessage += `- Removal: ${floorDetails?.removal || "None"}\n\n`;
-
-      if (floorDetails?.sqft > 0) {
-        lineItems.push({
-          name: "Floor Installation",
-          description: `${floorDetails.material} flooring installation - ${floorDetails.sqft} sqft`,
-          quantity: parseFloat(floorDetails.sqft),
-          unitCost: 8.0, // Average cost per sqft
-        });
-      }
+    // GENERATE PDF
+    let pdfUrl = null;
+    try {
+      pdfUrl = await generateQuotePDF({
+        firstName,
+        lastName,
+        email,
+        projectType,
+        stairDetails,
+        floorDetails,
+        totalEstimate
+      });
+    } catch (pdfError) {
+      console.error("PDF Generation error:", pdfError);
     }
 
-    const quoteData = {
-      clientId,
-      title: `${projectType} Flooring Project Quote`,
-      subject: "Your Custom Flooring Quote",
-      message:
-        quoteMessage +
-        `**Estimated Total: $${totalEstimate?.toFixed(2) || "0.00"}**\n\nThis is a preliminary estimate. Final pricing will be confirmed after our free in-home consultation.`,
-      lineItems,
-    };
-
-    let quote = null;
-
-    // Use provided token or fall back to stored token
-    const token = accessToken || jobberService.accessToken;
-
-    // Create quote in Jobber if clientId and token provided
-    if (clientId && token) {
-      try {
-        quote = await jobberService.createQuote(quoteData, token);
-      } catch (jobberError) {
-        console.error("Jobber quote creation error:", jobberError.message);
-      }
-    }
+    // CREATE DATABASE RECORD
+    const quote = await Quote.create({
+      firstName,
+      lastName,
+      email,
+      projectType,
+      stairDetails,
+      floorDetails,
+      totalEstimate,
+      pdfUrl
+    });
 
     // Send quote email if email provided
     if (email) {
@@ -196,7 +157,7 @@ router.post("/quote", async (req, res) => {
           totalEstimate,
           stairDetails,
           floorDetails,
-        });
+        }, pdfUrl);
       } catch (emailError) {
         console.error("Quote email error:", emailError.message);
       }
@@ -207,10 +168,7 @@ router.post("/quote", async (req, res) => {
       message: email
         ? "Quote created! Check your email."
         : "Quote created successfully",
-      data: {
-        quote,
-        emailSent: !!email,
-      },
+      data: quote,
     });
   } catch (error) {
     console.error("Quote creation error:", error);
@@ -227,20 +185,21 @@ router.post("/quote", async (req, res) => {
  */
 router.get("/list", async (req, res) => {
   try {
-    const { accessToken, limit = 10 } = req.query;
+    // const { accessToken, limit = 10 } = req.query;
 
-    if (!accessToken) {
-      return res.status(400).json({
-        success: false,
-        error: "Access token is required",
-      });
-    }
+    // if (!accessToken) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     error: "Access token is required",
+    //   });
+    // }
 
-    const visits = await jobberService.listVisits(accessToken, parseInt(limit));
+    // const visits = await jobberService.listVisits(accessToken, parseInt(limit));
 
     res.json({
       success: true,
-      data: visits,
+      data: [],
+      message: "Jobber Integration currently disabled",
     });
   } catch (error) {
     console.error("List bookings error:", error);
