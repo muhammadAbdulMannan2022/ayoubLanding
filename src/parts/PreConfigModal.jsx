@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { X, Info, CheckCircle2, ArrowRight, Send, ChevronLeft } from "lucide-react";
+import { X, Info, CheckCircle2, ArrowRight, Send, ChevronLeft, Loader2 } from "lucide-react";
+import { createLead } from "../api/backend";
 
 const PreConfigModal = ({ isOpen, onClose, onStart, projectType }) => {
   const [step, setStep] = useState("info"); // "info" or "form"
@@ -9,7 +10,29 @@ const PreConfigModal = ({ isOpen, onClose, onStart, projectType }) => {
     address: ""
   });
 
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+
   if (!isOpen) return null;
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await createLead({ ...formData, projectType });
+      setSuccess(true);
+      setTimeout(() => {
+        onClose();
+        setSuccess(false);
+        setStep("info");
+      }, 2000);
+    } catch (error) {
+      console.error("Lead submission error:", error);
+      alert("Failed to send form. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
@@ -34,7 +57,15 @@ const PreConfigModal = ({ isOpen, onClose, onStart, projectType }) => {
 
         {/* Content */}
         <div className="p-8">
-          {step === "info" ? (
+          {success ? (
+            <div className="py-12 flex flex-col items-center justify-center text-center space-y-4 animate-in zoom-in-95 duration-500">
+              <div className="w-20 h-20 rounded-full bg-green-50 text-green-500 flex items-center justify-center">
+                <CheckCircle2 className="w-10 h-10" />
+              </div>
+              <h4 className="text-2xl font-black text-black">Success!</h4>
+              <p className="text-gray-500 font-medium">The form link has been sent to your email.</p>
+            </div>
+          ) : step === "info" ? (
             <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
               <p className="text-gray-500 font-medium">
                 To provide you with an accurate estimate, please have the following information ready:
@@ -129,42 +160,49 @@ const PreConfigModal = ({ isOpen, onClose, onStart, projectType }) => {
         </div>
 
         {/* Footer */}
-        <div className="p-8 pt-0 space-y-3">
-          {step === "info" ? (
-            <>
-              <button 
-                onClick={onStart}
-                className="w-full py-5 bg-[#C9A961] hover:bg-[#B69752] text-white font-black rounded-2xl transition-all shadow-xl shadow-[#C9A961]/20 flex items-center justify-center gap-3 group"
-              >
-                I Have This Information - Start Now
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
-              <button 
-                onClick={() => setStep("form")}
-                className="w-full py-5 bg-white border-2 border-gray-50 text-gray-400 font-bold rounded-2xl hover:border-gray-100 hover:text-gray-600 transition-all"
-              >
-                Send Me the Form - I'll Complete It Later
-              </button>
-            </>
-          ) : (
-            <div className="flex gap-4">
-              <button 
-                onClick={() => setStep("info")}
-                className="flex-1 py-5 bg-white border-2 border-gray-50 text-gray-400 font-bold rounded-xl hover:border-gray-100 hover:text-gray-600 transition-all flex items-center justify-center gap-2"
-              >
-                <ChevronLeft className="w-5 h-5" />
-                Back
-              </button>
-              <button 
-                onClick={onClose}
-                className="flex-[2] py-5 bg-[#C9A961] hover:bg-[#B69752] text-white font-black rounded-xl transition-all shadow-xl shadow-[#C9A961]/20 flex items-center justify-center gap-3 group"
-              >
-                <Send className="w-4 h-4" />
-                Send Me the Form
-              </button>
-            </div>
-          )}
-        </div>
+        {!success && (
+          <div className="p-8 pt-0 space-y-3">
+            {step === "info" ? (
+              <>
+                <button 
+                  onClick={onStart}
+                  className="w-full py-5 bg-[#C9A961] hover:bg-[#B69752] text-white font-black rounded-2xl transition-all shadow-xl shadow-[#C9A961]/20 flex items-center justify-center gap-3 group"
+                >
+                  I Have This Information - Start Now
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </button>
+                <button 
+                  onClick={() => setStep("form")}
+                  className="w-full py-5 bg-white border-2 border-gray-50 text-gray-400 font-bold rounded-2xl hover:border-gray-100 hover:text-gray-600 transition-all"
+                >
+                  Send Me the Form - I'll Complete It Later
+                </button>
+              </>
+            ) : (
+              <div className="flex gap-4">
+                <button 
+                  onClick={() => setStep("info")}
+                  className="flex-1 py-5 bg-white border-2 border-gray-50 text-gray-400 font-bold rounded-xl hover:border-gray-100 hover:text-gray-600 transition-all flex items-center justify-center gap-2"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                  Back
+                </button>
+                <button 
+                  onClick={handleSubmit}
+                  disabled={loading || !formData.email || !formData.phone || !formData.address}
+                  className="flex-[2] py-5 bg-[#C9A961] hover:bg-[#B69752] text-white font-black rounded-xl transition-all shadow-xl shadow-[#C9A961]/20 flex items-center justify-center gap-3 group disabled:opacity-50"
+                >
+                  {loading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Send className="w-4 h-4" />
+                  )}
+                  {loading ? "Sending..." : "Send Me the Form"}
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

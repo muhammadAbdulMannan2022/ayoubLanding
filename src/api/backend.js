@@ -64,6 +64,35 @@ export const createQuote = async (quoteData) => {
 };
 
 /**
+ * Create a lead (Pre-configurator)
+ * @param {Object} leadData - Lead information
+ * @returns {Promise<Object>} - API response
+ */
+export const createLead = async (leadData) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/bookings/lead`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true",
+      },
+      body: JSON.stringify(leadData),
+    });
+
+    const data = await response.json();
+
+    if (!data.success) {
+      throw new Error(data.error || "Failed to create lead");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Lead creation error:", error);
+    throw error;
+  }
+};
+
+/**
  * Check server health
  * @returns {Promise<boolean>} - Server status
  */
@@ -114,6 +143,7 @@ export const getReviewsData = async () => {
 export default {
   createBooking,
   createQuote,
+  createLead,
   checkServerHealth,
   getHeroData,
   getReviewsData,

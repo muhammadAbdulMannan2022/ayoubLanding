@@ -180,6 +180,61 @@ router.post("/quote", async (req, res) => {
 });
 
 /**
+ * POST /api/bookings/lead
+ * Save a lead from the PreConfigModal
+ */
+router.post("/lead", async (req, res) => {
+  try {
+    const { email, phone, address, projectType } = req.body;
+
+    if (!email || !phone || !address) {
+      return res.status(400).json({
+        success: false,
+        error: "Missing required fields: email, phone, address",
+      });
+    }
+
+    // CREATE DATABASE RECORD (Using Booking model with partial data)
+    const lead = await Booking.create({
+      email,
+      phone,
+      address,
+      projectType,
+      firstName: "Lead",
+      lastName: "Capture",
+      notes: "Pre-Configurator Lead",
+    });
+
+    // Send notification to admin
+    try {
+      await emailService.sendAdminNotification({
+        firstName: "New",
+        lastName: "Lead",
+        email,
+        phone,
+        address,
+        projectType,
+        notes: "This user requested the form to be sent to them.",
+      });
+    } catch (emailError) {
+      console.error("Lead notification email error:", emailError.message);
+    }
+
+    res.status(201).json({
+      success: true,
+      message: "Form link sent successfully!",
+      data: lead,
+    });
+  } catch (error) {
+    console.error("Lead creation error:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message || "Failed to save lead",
+    });
+  }
+});
+
+/**
  * GET /api/bookings/list
  * List all visits/bookings
  */

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import {
   X,
   ChevronLeft,
@@ -33,6 +33,20 @@ const BookingModal = ({ isOpen, onClose, initialData, onComplete, shouldNavigate
     projectType: initialData?.type || "not_sure",
     notes: "",
   });
+
+  // Sync formData with initialData when it changes
+  useEffect(() => {
+    if (initialData) {
+      setFormData(prev => ({
+        ...prev,
+        fullName: initialData.fullName || prev.fullName,
+        email: initialData.email || prev.email,
+        phone: initialData.phone || prev.phone,
+        address: initialData.address || prev.address,
+        projectType: initialData.type || "not_sure"
+      }));
+    }
+  }, [initialData]);
 
   // Calendar State - MOVED TO TOP
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -105,7 +119,7 @@ const BookingModal = ({ isOpen, onClose, initialData, onComplete, shouldNavigate
       // Split full name into first and last name
       const nameParts = formData.fullName.trim().split(" ");
       const firstName = nameParts[0] || "";
-      const lastName = nameParts.slice(1).join(" ") || "";
+      const lastName = nameParts.slice(1).join(" ") || "__";
 
       // Format date if selected
       let formattedDate = null;

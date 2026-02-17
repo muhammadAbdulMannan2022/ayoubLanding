@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import { hero, reviews, User, Booking, Quote } from "./models/index.js";
 import sequelize from "./sequelize.js";
 import path from "path";
+import fs from "fs";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -272,6 +273,49 @@ export const setupAdmin = (app) => {
             floorDetails: { type: "mixed" },
             pdfUrl: { type: "string", components: { show: "DownloadButton" } },
             id: { isVisible: { list: false, filter: true, show: true, edit: false } },
+          },
+          actions: {
+            delete: {
+              before: async (request, context) => {
+                const { record } = context;
+                if (record && record.params.pdfUrl) {
+                  const pdfPath = path.join(__dirname, "../public", record.params.pdfUrl);
+                  if (fs.existsSync(pdfPath)) {
+                    try {
+                      fs.unlinkSync(pdfPath);
+                      console.log(`✅ Deleted PDF: ${pdfPath}`);
+                    } catch (err) {
+                      console.error(`❌ Error deleting PDF: ${err.message}`);
+                    }
+                  }
+                }
+                return request;
+              },
+            },
+            bulkDelete: {
+              before: async (request, context) => {
+                const { resource } = context;
+                const { recordIds } = request.payload || {};
+                
+                if (recordIds && recordIds.length > 0) {
+                  for (const id of recordIds) {
+                    const record = await resource.findOne(id);
+                    if (record && record.params.pdfUrl) {
+                      const pdfPath = path.join(__dirname, "../public", record.params.pdfUrl);
+                      if (fs.existsSync(pdfPath)) {
+                        try {
+                          fs.unlinkSync(pdfPath);
+                          console.log(`✅ Deleted PDF (Bulk): ${pdfPath}`);
+                        } catch (err) {
+                          console.error(`❌ Error deleting PDF (Bulk): ${err.message}`);
+                        }
+                      }
+                    }
+                  }
+                }
+                return request;
+              },
+            },
           },
         },
       },

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CheckCircle2, Sparkles, LayoutGrid, Info, BarChart3, Clock, ArrowRight, Zap } from "lucide-react";
+import { CheckCircle2, Sparkles, LayoutGrid, Info, BarChart3, Clock, ArrowRight, Zap, Phone, Calendar } from "lucide-react";
 import FlooringQuizModal from "./FlooringQuizModal";
 import FlooringComparisonModal from "./FlooringComparisonModal";
 
@@ -437,13 +437,16 @@ const FloorDetailsForm = ({ data, onChange, onComplete, onSkip }) => {
         <button 
           onClick={onComplete}
           disabled={!data.material || !data.grade || !data.sqft || (data.material && !data.finish)}
-          className={`w-full py-5 font-black rounded-xl transition-all ${
+          className={`w-full py-5 font-black rounded-xl transition-all flex items-center justify-center gap-3 ${
             data.material && data.grade && data.sqft && data.finish
               ? "bg-[#C9A961] text-white hover:bg-[#B69752] shadow-xl shadow-[#C9A961]/20"
               : "bg-[#D1D5DB] text-gray-500 cursor-not-allowed"
           }`}
         >
-          Complete All Steps to Continue
+          {isUnlocked ? <Calendar className="w-5 h-5 flex-shrink-0" /> : <Phone className="w-5 h-5 flex-shrink-0" />}
+          <span className="text-sm">
+            {isUnlocked ? "Schedule Free In-Home Visit & Get Exclusive Discount" : "View Price & Get PDF Quote"}
+          </span>
         </button>
         <button 
           onClick={onSkip}

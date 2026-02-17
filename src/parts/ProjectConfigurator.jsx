@@ -11,6 +11,8 @@ import {
   Tag,
   Phone,
   FileText,
+  AlertCircle,
+  Loader2,
 } from "lucide-react";
 import BookingModal from "./BookingModal";
 import QuoteUnlockModal from "./QuoteUnlockModal";
@@ -106,6 +108,29 @@ export const ProjectConfigurator = () => {
     }
 
     return total;
+  };
+
+  const isStairsValid = () => {
+    return Number(stairData.steps) > 0;
+  };
+
+  const isFloorValid = () => {
+    return floorData.material && floorData.grade && Number(floorData.sqft) > 0 && floorData.finish;
+  };
+
+  const isConfigValid = () => {
+    if (selectedType === "stairs") return isStairsValid();
+    if (selectedType === "floor") return isFloorValid();
+    if (selectedType === "both") return isStairsValid() && isFloorValid();
+    return false;
+  };
+
+  const handleCompleteAllSteps = () => {
+    if (!isUnlocked) {
+      setIsUnlockModalOpen(true);
+    } else {
+      setIsModalOpen(true);
+    }
   };
 
   const totalEstimate = calculateTotal();
@@ -280,12 +305,25 @@ export const ProjectConfigurator = () => {
           </button>
         ) : (
           <button
-            onClick={() => {
-              setIsModalOpen(true);
-            }}
-            className="w-full py-5 bg-[#C9A961] text-white hover:cursor-pointer font-black rounded-xl transition-all"
+            onClick={handleCompleteAllSteps}
+            disabled={!isConfigValid()}
+            className={`w-full py-5 font-black rounded-xl transition-all flex items-center justify-center gap-3 ${
+              isConfigValid()
+                ? "bg-[#C9A961] text-white hover:bg-[#B69752] shadow-xl shadow-[#C9A961]/20"
+                : "bg-gray-200 text-gray-400 cursor-not-allowed"
+            }`}
           >
-            Complete All Steps to Continue
+            {isUnlocked ? <Calendar className="w-5 h-5" /> : <Phone className="w-5 h-5" />}
+            <div className="flex flex-col items-center">
+              <span className="text-sm">
+                {isUnlocked ? "Schedule Free In-Home Visit & Get Exclusive Discount" : "View Price & Get PDF Quote"}
+              </span>
+              {!isConfigValid() && (
+                <span className="text-[9px] uppercase tracking-widest opacity-60">
+                  Please complete all required fields *
+                </span>
+              )}
+            </div>
           </button>
         )}
         {!isUnlocked && (
@@ -382,9 +420,8 @@ export const ProjectConfigurator = () => {
               <FloorDetailsForm
                 data={floorData}
                 onChange={setFloorData}
-                onComplete={() => {
-                  // Stay on page, user uses sidebar buttons
-                }}
+                onComplete={handleCompleteAllSteps}
+                isUnlocked={isUnlocked}
                 onSkip={() => {
                   setIsModalOpen(true);
                 }}
@@ -395,9 +432,8 @@ export const ProjectConfigurator = () => {
                 <FloorDetailsForm
                   data={floorData}
                   onChange={setFloorData}
-                  onComplete={() => {
-                    // Stay on page
-                  }}
+                  onComplete={handleCompleteAllSteps}
+                  isUnlocked={isUnlocked}
                   onSkip={() => {
                     setIsModalOpen(true);
                   }}
@@ -466,7 +502,7 @@ export const ProjectConfigurator = () => {
             {(selectedType === "stairs" ||
             selectedType === "both" ||
             (selectedType === "floor" && floorData.sqft > 0)) && (
-              <div className="bg-[#1A1A1A] p-8 rounded-[2.5rem] shadow-2xl space-y-8 relative overflow-hidden group border border-white/5 animate-in zoom-in-95 duration-500">
+              <div id="quote-card" className="bg-[#1A1A1A] p-8 rounded-[2.5rem] shadow-2xl space-y-8 relative overflow-hidden group border border-white/5 animate-in zoom-in-95 duration-500">
                 <div className="flex items-center gap-2">
                   <div className="w-1 h-3 bg-[#C9A961] rounded-full"></div>
                   <span className="text-[10px] font-black text-[#C9A961] uppercase tracking-[0.2em]">
@@ -576,27 +612,34 @@ export const ProjectConfigurator = () => {
                   </div>
                   {!isUnlocked ? (
                     <button
-                      onClick={() => {
-                        setIsUnlockModalOpen(true);
-                      }}
-                      className="w-full py-5 bg-[#C9A961] hover:bg-[#B69752] text-black font-black rounded-2xl transition-all shadow-xl flex flex-col items-center justify-center group"
+                      onClick={handleCompleteAllSteps}
+                      disabled={!isConfigValid()}
+                      className={`w-full py-5 font-black rounded-2xl transition-all shadow-xl flex flex-col items-center justify-center group ${
+                        isConfigValid()
+                          ? "bg-[#C9A961] hover:bg-[#B69752] text-black"
+                          : "bg-white/5 text-white/20 cursor-not-allowed border border-white/10"
+                      }`}
                     >
                       <div className="flex items-center gap-3">
-                        <Phone className="w-5 h-5 text-black" />
-                        <span className="text-black font-black">View Price & Get PDF Quote</span>
+                        <Phone className={`w-5 h-5 ${isConfigValid() ? "text-black" : "text-white/20"}`} />
+                        <span className="font-black">View Price & Get PDF Quote</span>
                       </div>
+                      {!isConfigValid() && (
+                        <span className="text-[8px] uppercase tracking-tighter opacity-40 mt-1">
+                          Complete details above *
+                        </span>
+                      )}
                     </button>
                   ) : (
                     <button
-                      onClick={() => {
-                        setIsModalOpen(true);
-                      }}
-                      className="w-full py-5 bg-[#C9A961] hover:bg-[#B69752] text-black font-black rounded-2xl transition-all shadow-xl flex flex-col items-center justify-center group"
+                      onClick={handleCompleteAllSteps}
+                      disabled={!isConfigValid()}
+                      className="w-full py-5 bg-[#C9A961] hover:bg-[#B69752] text-black font-black rounded-2xl transition-all shadow-xl flex items-center justify-center gap-3 disabled:opacity-70 group"
                     >
-                      <div className="flex items-center gap-3">
-                        <Calendar className="w-5 h-5 text-black" />
-                        <span className="text-black font-black">Complete All Steps to Continue</span>
-                      </div>
+                      {isUnlocked ? <Calendar className="w-5 h-5" /> : <Phone className="w-5 h-5 text-black" />}
+                      <span className="text-sm">
+                        {isUnlocked ? "Schedule Free In-Home Visit & Get Exclusive Discount" : "View Price & Get PDF Quote"}
+                      </span>
                     </button>
                   )}
                     <p className="text-[9px] text-white/40 font-medium text-center px-4">
@@ -624,16 +667,10 @@ export const ProjectConfigurator = () => {
                   </div>
 
                   <div className="space-y-1">
-                    <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">
-                      Starting from
-                    </p>
                     <div className="flex items-baseline gap-2">
-                      <span className="text-6xl font-black text-black tracking-tighter">
-                        $2,450
-                      </span>
-                      <span className="text-[#C9A961] font-bold text-xl uppercase">
-                        *
-                      </span>
+                       <span className="text-sm font-bold text-[#C9A961] uppercase tracking-[0.2em] leading-relaxed">
+                        Select a project type <br /> to see your custom estimate
+                       </span>
                     </div>
                   </div>
 
