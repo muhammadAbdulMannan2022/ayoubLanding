@@ -14,7 +14,7 @@ export const Navbar = () => {
           <div className="flex items-center gap-10">
             <div className="flex items-center gap-1">
               <img
-                src="https://i.ibb.co.com/nqV1xY21/logo.png"
+                src="/LogoWhite.png"
                 alt="ALPHA
 FLOORING"
                 className="w-auto h-10"

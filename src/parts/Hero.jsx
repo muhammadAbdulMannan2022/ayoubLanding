@@ -64,7 +64,10 @@ export const Hero = () => {
       ? (() => {
           let items = heroApiData.items;
           // Robust parsing for double-stringified data
-          while (typeof items === "string" && (items.startsWith("[") || items.startsWith("\""))) {
+          while (
+            typeof items === "string" &&
+            (items.startsWith("[") || items.startsWith('"'))
+          ) {
             try {
               const parsed = JSON.parse(items);
               if (typeof parsed === "string" || Array.isArray(parsed)) {
@@ -94,14 +97,22 @@ export const Hero = () => {
       : heroFallbackData;
 
   const activeItem = heroItems[activeIndex];
-  const smallItems = heroItems.filter((_, i) => i !== activeIndex);
+  const smallItems = heroItems
+    .map((item, idx) => ({ ...item, originalIndex: idx }))
+    .filter((_, i) => i !== activeIndex);
 
   const heroQuat = (() => {
     let quat = heroApiData?.quat;
-    while (typeof quat === "string" && (quat.startsWith("{") || quat.startsWith("\""))) {
+    while (
+      typeof quat === "string" &&
+      (quat.startsWith("{") || quat.startsWith('"'))
+    ) {
       try {
         const parsed = JSON.parse(quat);
-        if (typeof parsed === "string" || (typeof parsed === "object" && parsed !== null)) {
+        if (
+          typeof parsed === "string" ||
+          (typeof parsed === "object" && parsed !== null)
+        ) {
           quat = parsed;
         } else {
           break;
@@ -213,14 +224,21 @@ export const Hero = () => {
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <a
                 href="#configurator"
-                className="group relative px-10 py-5 bg-[#C9A961] hover:bg-[#b89850] text-black font-black rounded-2xl flex items-center justify-center gap-3 text-lg transition-all duration-300 shadow-[0_10px_30px_rgba(201,169,97,0.3)] hover:shadow-[0_15px_40px_rgba(201,169,97,0.4)] hover:-translate-y-1"
+                className="group relative overflow-hidden px-10 py-5 bg-[#C9A961] text-black font-black rounded-2xl flex items-center justify-center gap-3 text-lg transition-all duration-300 shadow-[0_10px_30px_rgba(201,169,97,0.3)] hover:shadow-[0_15px_40px_rgba(201,169,97,0.4)] hover:-translate-y-1"
               >
-                Get Instant Quote
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                {/* Sliding Background */}
+                <span className="absolute inset-0 bg-white/10 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out"></span>
+
+                {/* Content */}
+                <span className="relative z-10 flex items-center gap-2  transition-colors duration-300">
+                  Get Instant Quote
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+                </span>
               </a>
+
               <a
                 href="#configurator"
-                className="px-10 py-5 bg-transparent border-2 border-white/10 hover:border-white/30 text-white font-bold rounded-2xl transition-all duration-300 text-lg hover:bg-white/5 flex items-center justify-center"
+                className="px-10 py-5 bg-transparent border-2 border-white/10 hover:border-[#C9A961] text-white font-bold rounded-2xl transition-all duration-300 text-lg hover:bg-white/5 flex items-center justify-center hover:scale-105"
               >
                 Schedule Free Visit
               </a>
@@ -229,7 +247,7 @@ export const Hero = () => {
             {/* Location Tag */}
             <div className="flex items-center gap-2 text-sm text-gray-500 font-semibold pt-2">
               <MapPin className="w-4 h-4 text-[#C9A961]" />
-              Proudly serving St Cloud, Florida & surrounding areas
+              Proudly serving St. Cloud, Florida & surrounding areas.
             </div>
           </div>
 
@@ -240,7 +258,7 @@ export const Hero = () => {
               {/* Outer Golden Glow */}
               <div className="absolute -inset-4 bg-[#C9A961]/20 blur-3xl rounded-[3rem] opacity-50 group-hover:opacity-100 transition-opacity duration-700"></div>
 
-              <div className="relative rounded-[2.5rem] overflow-hidden border border-white/10 shadow-[0_20px_50px_-12px_rgba(201,169,97,0.5)] aspect-4/4">
+              <div className="relative hover:scale-105 hover:-rotate-2 transition-all duration-300 rounded-[2.5rem] overflow-hidden border border-white/10 shadow-[0_20px_50px_-12px_rgba(201,169,97,0.5)] aspect-4/4">
                 <img
                   key={activeItem.id}
                   src={activeItem.img}
@@ -265,7 +283,7 @@ export const Hero = () => {
                   className="absolute bottom-10 left-10 right-10 z-10 space-y-4 animate-gentle-slide"
                   style={{ animationDelay: "0.1s" }}
                 >
-                  <div className="flex items-center gap-2">
+                  {/* <div className="flex items-center gap-2">
                     <div className="flex gap-0.5">
                       {[...Array(5)].map((_, i) => (
                         <Star
@@ -277,7 +295,7 @@ export const Hero = () => {
                     <span className="text-white text-sm font-bold tracking-wide">
                       {activeItem.starText}
                     </span>
-                  </div>
+                  </div> */}
                   <h3 className="text-4xl font-black text-white leading-tight">
                     {activeItem.title}
                   </h3>
@@ -290,7 +308,7 @@ export const Hero = () => {
               {/* Floating Badges */}
 
               {/* Happy Clients Badge */}
-              <div className="absolute -left-6 bunch sm:-left-10  ease-linear top-[20%] sm:top-1/4 bg-white px-5 sm:px-8 py-3 sm:py-6 rounded-3xl sm:rounded-4xl shadow-[0_25px_60px_rgba(201,169,97,0.3)] z-40 text-center border border-white/20 transform -rotate-3 hover:rotate-0 transition-all duration-500">
+              {/* <div className="absolute -left-6 bunch sm:-left-10  ease-linear top-[20%] sm:top-1/4 bg-white px-5 sm:px-8 py-3 sm:py-6 rounded-3xl sm:rounded-4xl shadow-[0_25px_60px_rgba(201,169,97,0.3)] z-40 text-center border border-white/20 transform -rotate-3 hover:rotate-0 transition-all duration-500">
                 <div className="text-2xl sm:text-4xl font-black text-[#C9A961] tracking-tighter leading-none mb-1">
                   {heroApiData?.ratings_project_count
                     ? `${heroApiData.ratings_project_count}+`
@@ -299,7 +317,7 @@ export const Hero = () => {
                 <div className="text-[8px] sm:text-[10px] text-[#1A1A1A] font-black uppercase tracking-widest leading-none">
                   Happy Clients
                 </div>
-              </div>
+              </div> */}
 
               {/* Review Card */}
               <div className="absolute -bottom-10 bunch sm:-bottom-6 -right-6 sm:-right-10 bg-white p-4 sm:p-8 rounded-4xl sm:rounded-[2.5rem] shadow-[0_30px_70px_rgba(201,169,97,0.3)] z-40 max-w-45 sm:max-w-70 border border-white/20 transform rotate-2 hover:rotate-0 transition-all duration-500">
@@ -327,7 +345,7 @@ export const Hero = () => {
               {smallItems.map((item) => (
                 <div
                   key={item.id}
-                  onClick={() => setActiveIndex(item.id)}
+                  onClick={() => setActiveIndex(item.originalIndex)}
                   className="flex-1 rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 aspect-video relative group shadow-[0_15px_30px_-5px_rgba(201,169,97,0.3)] cursor-pointer transition-all duration-500 hover:rotate-[5deg] hover:shadow-[0_25px_50px_rgba(201,169,97,0.5)] transform"
                 >
                   <img

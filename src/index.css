@@ -2,6 +2,9 @@
 .bunch {
   animation: bunch 1.5s linear infinite;
 }
+html {
+  scroll-behavior: smooth;
+}
 
 @keyframes bunch {
   0% {

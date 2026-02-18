@@ -303,13 +303,13 @@ const BookingModal = ({ isOpen, onClose, initialData, onComplete, shouldNavigate
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+                    <label className="text-xs font-bold text-black uppercase tracking-widest">
                       Full Name *
                     </label>
                     <input
                       placeholder="John Smith"
                       required
-                      className="w-full px-4 py-3 rounded-xl border border-gray-100 focus:border-[#C9A961] outline-none"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-100 focus:border-[#C9A961] outline-none text-black font-medium"
                       value={formData.fullName}
                       onChange={(e) =>
                         setFormData({ ...formData, fullName: e.target.value })
@@ -317,14 +317,14 @@ const BookingModal = ({ isOpen, onClose, initialData, onComplete, shouldNavigate
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+                    <label className="text-xs font-bold text-black uppercase tracking-widest">
                       Email Address *
                     </label>
                     <input
                       placeholder="john@example.com"
                       required
                       type="email"
-                      className="w-full px-4 py-3 rounded-xl border border-gray-100 focus:border-[#C9A961] outline-none"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-100 focus:border-[#C9A961] outline-none text-black font-medium"
                       value={formData.email}
                       onChange={(e) =>
                         setFormData({ ...formData, email: e.target.value })
@@ -334,13 +334,14 @@ const BookingModal = ({ isOpen, onClose, initialData, onComplete, shouldNavigate
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+                    <label className="text-xs font-bold text-black uppercase tracking-widest">
                       Phone Number *
                     </label>
                     <input
                       placeholder="(321) 555-0100"
                       required
-                      className="w-full px-4 py-3 rounded-xl border border-gray-100 focus:border-[#C9A961] outline-none"
+                      type="tel"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-100 focus:border-[#C9A961] outline-none text-black font-medium"
                       value={formData.phone}
                       onChange={(e) =>
                         setFormData({ ...formData, phone: e.target.value })
@@ -348,13 +349,13 @@ const BookingModal = ({ isOpen, onClose, initialData, onComplete, shouldNavigate
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+                    <label className="text-xs font-bold text-black uppercase tracking-widest">
                       Project Address *
                     </label>
                     <input
                       placeholder="123 Main St"
                       required
-                      className="w-full px-4 py-3 rounded-xl border border-gray-100 focus:border-[#C9A961] outline-none"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-100 focus:border-[#C9A961] outline-none text-black font-medium"
                       value={formData.address}
                       onChange={(e) =>
                         setFormData({ ...formData, address: e.target.value })

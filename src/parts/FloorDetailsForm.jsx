@@ -3,7 +3,7 @@ import { CheckCircle2, Sparkles, LayoutGrid, Info, BarChart3, Clock, ArrowRight,
 import FlooringQuizModal from "./FlooringQuizModal";
 import FlooringComparisonModal from "./FlooringComparisonModal";
 
-const FloorDetailsForm = ({ data, onChange, onComplete, onSkip }) => {
+const FloorDetailsForm = ({ data, onChange, onComplete, onSkip, isUnlocked }) => {
   const [isQuizModalOpen, setIsQuizModalOpen] = useState(false);
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
 
@@ -123,11 +123,11 @@ const FloorDetailsForm = ({ data, onChange, onComplete, onSkip }) => {
               className={`p-6 rounded-2xl border-2 flex flex-col items-center justify-center gap-1 transition-all ${
                 data.roomCount === num
                   ? "border-[#C9A961] bg-[#C9A961]/5 shadow-lg shadow-[#C9A961]/10"
-                  : "border-gray-50 hover:border-gray-100 hover:bg-gray-50/50"
+                  : "border-gray-200 hover:border-[#C9A961]/30 hover:bg-gray-50/50"
               }`}
             >
-              <span className={`text-2xl font-black ${data.roomCount === num ? "text-black" : "text-gray-300"}`}>{num}</span>
-              <span className={`text-[10px] font-black uppercase tracking-widest ${data.roomCount === num ? "text-[#C9A961]" : "text-gray-400"}`}>
+              <span className={`text-2xl font-black ${data.roomCount === num ? "text-black" : "text-black/40"}`}>{num}</span>
+              <span className={`text-[10px] font-black uppercase tracking-widest ${data.roomCount === num ? "text-[#C9A961]" : "text-gray-500"}`}>
                 {num === 1 ? "Room" : "Rooms"}
               </span>
             </button>

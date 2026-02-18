@@ -178,14 +178,12 @@ const QuoteUnlockModal = ({ isOpen, onClose, projectData, initialData, onUnlocke
             </div>
 
             <div className="space-y-1.5">
-              <div className="flex justify-between items-baseline">
-                <label className="text-xs font-black text-black uppercase tracking-wider">Phone Number</label>
-                <span className="text-[10px] text-gray-400 font-bold uppercase">(Optional)</span>
-              </div>
+              <label className="text-xs font-black text-black uppercase tracking-wider">Phone Number *</label>
               <input 
                 type="tel" 
+                required
                 className="w-full px-5 py-4 rounded-xl border border-gray-100 bg-gray-50/50 focus:bg-white focus:border-[#C9A961] outline-none transition-all"
-                placeholder="01222222222"
+                placeholder="(321) 555-0123"
                 value={formData.phone}
                 onChange={(e) => setFormData({...formData, phone: e.target.value})}
               />

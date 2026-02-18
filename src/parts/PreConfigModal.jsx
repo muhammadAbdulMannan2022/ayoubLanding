@@ -63,11 +63,11 @@ const PreConfigModal = ({ isOpen, onClose, onStart, projectType }) => {
                 <CheckCircle2 className="w-10 h-10" />
               </div>
               <h4 className="text-2xl font-black text-black">Success!</h4>
-              <p className="text-gray-500 font-medium">The form link has been sent to your email.</p>
+              <p className="text-black font-light">The form link has been sent to your email.</p>
             </div>
           ) : step === "info" ? (
             <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
-              <p className="text-gray-500 font-medium">
+              <p className="text-black font-light text-lg">
                 To provide you with an accurate estimate, please have the following information ready:
               </p>
 
@@ -76,7 +76,7 @@ const PreConfigModal = ({ isOpen, onClose, onStart, projectType }) => {
                 <div className="p-6 rounded-2xl bg-gray-50/50 border border-gray-100 space-y-4">
                   <div className="flex items-center gap-3">
                     <div className="w-6 h-6 rounded-full bg-[#C9A961] text-white flex items-center justify-center text-xs font-black">1</div>
-                    <h4 className="font-black text-black">
+                    <h4 className="font-bold text-black uppercase tracking-tight">
                       {projectType === "both" ? "Flooring & Stair Information" : 
                        projectType === "floor" ? "Flooring Project Information" : 
                        "Stair Installation Information"}
@@ -89,7 +89,7 @@ const PreConfigModal = ({ isOpen, onClose, onStart, projectType }) => {
                       (projectType === "stairs" || projectType === "both") && "Number of landings & box steps",
                       (projectType === "floor" || projectType === "both") && "Current flooring type (for removal)"
                     ].filter(Boolean).map((item, i) => (
-                      <div key={i} className="flex items-center gap-2 text-sm text-gray-500 font-bold">
+                      <div key={i} className="flex items-center gap-2 text-sm text-black font-light">
                         <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
                         {item}
                       </div>
@@ -101,14 +101,14 @@ const PreConfigModal = ({ isOpen, onClose, onStart, projectType }) => {
                 <div className="p-6 rounded-2xl bg-gray-50/50 border border-gray-100 space-y-4">
                   <div className="flex items-center gap-3">
                     <div className="w-6 h-6 rounded-full bg-[#C9A961] text-white flex items-center justify-center text-xs font-black">2</div>
-                    <h4 className="font-black text-black">Additional Details</h4>
+                    <h4 className="font-bold text-black uppercase tracking-tight">Additional Details</h4>
                   </div>
                   <div className="space-y-3 pl-9">
                     {[
                       "Your preferred color or finish",
                       "Desired project timeline"
                     ].map((item, i) => (
-                      <div key={i} className="flex items-center gap-2 text-sm text-gray-500 font-bold">
+                      <div key={i} className="flex items-center gap-2 text-sm text-black font-light">
                         <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
                         {item}
                       </div>
@@ -119,37 +119,40 @@ const PreConfigModal = ({ isOpen, onClose, onStart, projectType }) => {
             </div>
           ) : (
             <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
-              <p className="text-gray-500 font-medium leading-relaxed">
+              <p className="text-black font-light text-lg leading-relaxed">
                 We'll send you the configurator form so you can complete it when you have all the information ready.
               </p>
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Email Address *</label>
+                  <label className="text-xs font-black text-black uppercase tracking-widest">Email Address *</label>
                   <input 
                     type="email" 
+                    required
                     placeholder="your@email.com"
-                    className="w-full px-6 py-4 rounded-xl border border-gray-200 focus:border-[#C9A961] outline-none transition-all font-bold"
+                    className="w-full px-6 py-4 rounded-xl border border-gray-200 focus:border-[#C9A961] outline-none transition-all font-bold text-black"
                     value={formData.email}
                     onChange={(e) => setFormData({...formData, email: e.target.value})}
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Phone Number *</label>
+                  <label className="text-xs font-black text-black uppercase tracking-widest">Phone Number *</label>
                   <input 
                     type="tel" 
+                    required
                     placeholder="(321) 555-0123"
-                    className="w-full px-6 py-4 rounded-xl border border-gray-200 focus:border-[#C9A961] outline-none transition-all font-bold"
+                    className="w-full px-6 py-4 rounded-xl border border-gray-200 focus:border-[#C9A961] outline-none transition-all font-bold text-black"
                     value={formData.phone}
                     onChange={(e) => setFormData({...formData, phone: e.target.value})}
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Project Address *</label>
+                  <label className="text-xs font-black text-black uppercase tracking-widest">Project Address *</label>
                   <input 
                     type="text" 
+                    required
                     placeholder="123 Main St, St Cloud, FL"
-                    className="w-full px-6 py-4 rounded-xl border border-gray-200 focus:border-[#C9A961] outline-none transition-all font-bold"
+                    className="w-full px-6 py-4 rounded-xl border border-gray-200 focus:border-[#C9A961] outline-none transition-all font-bold text-black"
                     value={formData.address}
                     onChange={(e) => setFormData({...formData, address: e.target.value})}
                   />
@@ -173,7 +176,7 @@ const PreConfigModal = ({ isOpen, onClose, onStart, projectType }) => {
                 </button>
                 <button 
                   onClick={() => setStep("form")}
-                  className="w-full py-5 bg-white border-2 border-gray-50 text-gray-400 font-bold rounded-2xl hover:border-gray-100 hover:text-gray-600 transition-all"
+                  className="w-full py-5 bg-white border-2 border-[#C9A961] text-[#C9A961] font-black rounded-2xl hover:bg-[#C9A961]/5 transition-all shadow-sm"
                 >
                   Send Me the Form - I'll Complete It Later
                 </button>
@@ -182,7 +185,7 @@ const PreConfigModal = ({ isOpen, onClose, onStart, projectType }) => {
               <div className="flex gap-4">
                 <button 
                   onClick={() => setStep("info")}
-                  className="flex-1 py-5 bg-white border-2 border-gray-50 text-gray-400 font-bold rounded-xl hover:border-gray-100 hover:text-gray-600 transition-all flex items-center justify-center gap-2"
+                  className="flex-1 py-5 bg-white border-2 border-gray-100 text-black font-bold rounded-xl hover:bg-gray-50 transition-all flex items-center justify-center gap-2"
                 >
                   <ChevronLeft className="w-5 h-5" />
                   Back

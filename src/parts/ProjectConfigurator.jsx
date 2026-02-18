@@ -153,194 +153,6 @@ export const ProjectConfigurator = () => {
     },
   ];
 
-  const StairDetailsForm = () => (
-    <div className="space-y-24 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* Step 2: Stair Details */}
-      <div className="space-y-8">
-        <div className="space-y-2">
-          <div className="flex items-center gap-4">
-            <span className="text-[10px] font-black text-[#C9A961] uppercase tracking-[0.2em]">
-              Step 2
-            </span>
-          </div>
-          <h3 className="text-3xl font-black text-black">
-            Enter your stair details
-          </h3>
-          <p className="text-gray-400 text-sm font-medium">
-            Note: Pricing is for straight stairs only. If you have curved
-            stairs, the final price may be adjusted.
-          </p>
-        </div>
-
-        <div className="space-y-6">
-          {[
-            {
-              label: "Number of steps *",
-              key: "steps",
-              placeholder: "Enter number of steps",
-            },
-            { label: "Number of landings", key: "landings", placeholder: "0" },
-            { label: "Number of box steps", key: "boxSteps", placeholder: "0" },
-          ].map((field) => (
-            <div key={field.key} className="space-y-2">
-              <label className="text-sm font-bold text-black">
-                {field.label}
-              </label>
-              <input
-                type="number"
-                className="w-full px-6 py-4 rounded-xl border border-gray-200 focus:border-[#C9A961] outline-none transition-all font-medium"
-                placeholder={field.placeholder}
-                value={stairData[field.key]}
-                onChange={(e) =>
-                  setStairData({ ...stairData, [field.key]: e.target.value })
-                }
-              />
-            </div>
-          ))}
-          <p className="text-[10px] text-gray-400 font-medium italic">
-            Exact numbers help us provide a more accurate estimate.
-          </p>
-        </div>
-      </div>
-
-      {/* Step 3: Stair Material */}
-      <div className="space-y-8">
-        <div className="space-y-2">
-          <div className="flex items-center gap-4">
-            <span className="text-[10px] font-black text-[#C9A961] uppercase tracking-[0.2em]">
-              Step 3
-            </span>
-          </div>
-          <h3 className="text-3xl font-black text-black">
-            Your stair material
-          </h3>
-          <p className="text-gray-400 text-sm font-medium">
-            For stairs, we use premium LVP flooring for optimal durability.
-          </p>
-        </div>
-
-        <div className="p-8 rounded-3xl border-2 border-[#C9A961] bg-[#C9A961]/5 flex gap-6 relative group cursor-pointer transition-all">
-          <div className="w-6 h-6 rounded-full border-2 border-[#C9A961] flex items-center justify-center mt-1 shrink-0">
-            <div className="w-2.5 h-2.5 rounded-full bg-[#C9A961]"></div>
-          </div>
-          <div className="space-y-2">
-            <h4 className="font-black text-black text-xl tracking-tight">
-              LVP 5mm or thicker
-            </h4>
-            <p className="text-[#C9A961] font-bold text-sm">
-              Professional Grade Stair Flooring
-            </p>
-            <p className="text-xs text-gray-500 font-medium leading-relaxed max-w-lg">
-              Premium Luxury Vinyl Plank with exceptional durability and core
-              SPC strength. High quality stair finish that's durable, stylish,
-              and easy to maintain.
-            </p>
-            <p className="pt-2 text-[10px] text-gray-400 font-bold uppercase tracking-widest">
-              5mm+ core thickness • Premium wear layer
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Step 4: Timeline */}
-      <div className="space-y-8">
-        <div className="space-y-2">
-          <div className="flex items-center gap-4">
-            <span className="text-[10px] font-black text-[#C9A961] uppercase tracking-[0.2em]">
-              Step 4
-            </span>
-          </div>
-          <h3 className="text-3xl font-black text-black">
-            When would you like to start your project?
-          </h3>
-        </div>
-
-        <div className="grid gap-3">
-          {[
-            "As soon as possible",
-            "Within 1-2 weeks",
-            "Within 1 month",
-            "Just planning / exploring",
-          ].map((opt) => (
-            <button
-              key={opt}
-              onClick={() => setStairData({ ...stairData, timeline: opt })}
-              className={`p-5 rounded-2xl border-2 text-left flex items-center gap-4 transition-all group ${
-                stairData.timeline === opt
-                  ? "border-[#C9A961] bg-[#C9A961]/5"
-                  : "border-gray-50 bg-white hover:border-gray-100"
-              }`}
-            >
-              <div
-                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
-                  stairData.timeline === opt
-                    ? "border-[#C9A961]"
-                    : "border-gray-200"
-                }`}
-              >
-                {stairData.timeline === opt && (
-                  <div className="w-2 h-2 rounded-full bg-[#C9A961]"></div>
-                )}
-              </div>
-              <span
-                className={`font-bold ${stairData.timeline === opt ? "text-black" : "text-gray-400"}`}
-              >
-                {opt}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Completion Buttons */}
-      <div className="space-y-3 pt-12">
-        {!isUnlocked ? (
-          <button
-            onClick={() => {
-              setIsUnlockModalOpen(true);
-            }}
-            className="w-full py-5 bg-[#C9A961] text-white hover:cursor-pointer font-black rounded-xl transition-all"
-          >
-            View Price & Get PDF Quote
-          </button>
-        ) : (
-          <button
-            onClick={handleCompleteAllSteps}
-            disabled={!isConfigValid()}
-            className={`w-full py-5 font-black rounded-xl transition-all flex items-center justify-center gap-3 ${
-              isConfigValid()
-                ? "bg-[#C9A961] text-white hover:bg-[#B69752] shadow-xl shadow-[#C9A961]/20"
-                : "bg-gray-200 text-gray-400 cursor-not-allowed"
-            }`}
-          >
-            {isUnlocked ? <Calendar className="w-5 h-5" /> : <Phone className="w-5 h-5" />}
-            <div className="flex flex-col items-center">
-              <span className="text-sm">
-                {isUnlocked ? "Schedule Free In-Home Visit & Get Exclusive Discount" : "View Price & Get PDF Quote"}
-              </span>
-              {!isConfigValid() && (
-                <span className="text-[9px] uppercase tracking-widest opacity-60">
-                  Please complete all required fields *
-                </span>
-              )}
-            </div>
-          </button>
-        )}
-        {!isUnlocked && (
-          <button
-            onClick={() => {
-              setPendingQuoteUnlock(false);
-              setIsModalOpen(true);
-            }}
-            className="w-full py-5 bg-[#ffffff] border hover:cursor-pointer border-[#C9A961] text-[#C9A961]  rounded-xl transition-all font-black"
-          >
-            Skip to Schedule
-          </button>
-        )}
-      </div>
-    </div>
-  );
-
   return (
     <section
       id="configurator"
@@ -415,7 +227,16 @@ export const ProjectConfigurator = () => {
             </div>
 
             {/* Step 2: Dynamic Detail Forms */}
-            {selectedType === "stairs" && <StairDetailsForm />}
+            {selectedType === "stairs" && (
+              <StairDetailsForm
+                stairData={stairData}
+                setStairData={setStairData}
+                isUnlocked={isUnlocked}
+                onComplete={handleCompleteAllSteps}
+                onSkip={() => setIsModalOpen(true)}
+                isConfigValid={isConfigValid}
+              />
+            )}
             {selectedType === "floor" && (
               <FloorDetailsForm
                 data={floorData}
@@ -439,7 +260,14 @@ export const ProjectConfigurator = () => {
                   }}
                 />
                 <div className="h-px bg-gray-100"></div>
-                <StairDetailsForm />
+                <StairDetailsForm
+                  stairData={stairData}
+                  setStairData={setStairData}
+                  isUnlocked={isUnlocked}
+                  onComplete={handleCompleteAllSteps}
+                  onSkip={() => setIsModalOpen(true)}
+                  isConfigValid={isConfigValid}
+                />
               </div>
             )}
           </div>
@@ -447,7 +275,7 @@ export const ProjectConfigurator = () => {
           {/* Right Side: Summary Widgets */}
           <div className="w-full lg:w-100 space-y-6 lg:sticky lg:top-32">
             {/* Schedule Help Card */}
-            <div className="bg-white p-8 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] space-y-6 group border border-[#C9A961]/20">
+            <div className="bg-white p-8 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] space-y-6 group border border-[#C9A961]/20 ">
               <div className="flex items-start gap-4">
                 <div className="p-3 bg-[#C9A961]/10 rounded-2xl flex-shrink-0">
                   <Home className="w-6 h-6 text-[#C9A961]" />
@@ -742,7 +570,196 @@ export const ProjectConfigurator = () => {
   );
 };
 
-// SVG Components for consistent iconography
+// --- Sub Components ---
+const StairDetailsForm = ({ stairData, setStairData, isUnlocked, onComplete, onSkip, isConfigValid }) => (
+  <div className="space-y-24 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    {/* Step 2: Stair Details */}
+    <div className="space-y-8">
+      <div className="space-y-2">
+        <div className="flex items-center gap-4">
+          <span className="text-[10px] font-black text-[#C9A961] uppercase tracking-[0.2em]">
+            Step 2
+          </span>
+        </div>
+        <h3 className="text-3xl font-black text-black">
+          Enter your stair details
+        </h3>
+        <p className="text-gray-400 text-sm font-medium">
+          Note: Pricing is for straight stairs only. If you have curved
+          stairs, the final price may be adjusted.
+        </p>
+      </div>
+
+      <div className="space-y-6">
+        {[
+          {
+            label: "Number of steps *",
+            key: "steps",
+            placeholder: "Enter number of steps",
+          },
+          {
+            label: "Number of landings",
+            key: "landings",
+            placeholder: "0",
+          },
+          {
+            label: "Number of box steps",
+            key: "boxSteps",
+            placeholder: "0",
+          },
+        ].map((field) => (
+          <div key={field.key} className="space-y-2">
+            <label className="text-xs font-black text-gray-500 uppercase tracking-widest">
+              {field.label}
+            </label>
+            <input
+              type="number"
+              className="w-full px-6 py-4 rounded-xl border border-gray-200 focus:border-[#C9A961] outline-none transition-all font-medium text-black"
+              placeholder={field.placeholder}
+              value={stairData[field.key]}
+              onChange={(e) =>
+                setStairData({ ...stairData, [field.key]: e.target.value })
+              }
+            />
+          </div>
+        ))}
+        <p className="text-[10px] text-gray-400 font-medium italic">
+          Exact numbers help us provide a more accurate estimate.
+        </p>
+      </div>
+    </div>
+
+    {/* Step 3: Stair Material */}
+    <div className="space-y-8">
+      <div className="space-y-2">
+        <div className="flex items-center gap-4">
+          <span className="text-[10px] font-black text-[#C9A961] uppercase tracking-[0.2em]">
+            Step 3
+          </span>
+        </div>
+        <h3 className="text-3xl font-black text-black">
+          Your stair material
+        </h3>
+        <p className="text-gray-400 text-sm font-medium">
+          For stairs, we use premium LVP flooring for optimal durability.
+        </p>
+      </div>
+
+      <div className="p-8 rounded-3xl border-2 border-[#C9A961] bg-[#C9A961]/5 flex gap-6 relative group cursor-pointer transition-all">
+        <div className="w-6 h-6 rounded-full border-2 border-[#C9A961] flex items-center justify-center mt-1 shrink-0">
+          <div className="w-2.5 h-2.5 rounded-full bg-[#C9A961]"></div>
+        </div>
+        <div className="space-y-2">
+          <h4 className="font-black text-black text-xl tracking-tight">
+            LVP 5mm or thicker
+          </h4>
+          <p className="text-[#C9A961] font-bold text-sm">
+            Professional Grade Stair Flooring
+          </p>
+          <p className="text-xs text-gray-500 font-medium leading-relaxed max-w-lg">
+            Premium Luxury Vinyl Plank with exceptional durability and core
+            SPC strength. High quality stair finish that's durable, stylish,
+            and easy to maintain.
+          </p>
+          <p className="pt-2 text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+            5mm+ core thickness • Premium wear layer
+          </p>
+        </div>
+      </div>
+    </div>
+
+    {/* Step 4: Timeline */}
+    <div className="space-y-8">
+      <div className="space-y-2">
+        <div className="flex items-center gap-4">
+          <span className="text-[10px] font-black text-[#C9A961] uppercase tracking-[0.2em]">
+            Step 4
+          </span>
+        </div>
+        <h3 className="text-3xl font-black text-black">
+          When would you like to start your project?
+        </h3>
+      </div>
+
+      <div className="grid gap-3">
+        {[
+          "As soon as possible",
+          "Within 1-2 weeks",
+          "Within 1 month",
+          "Just planning / exploring",
+        ].map((opt) => (
+          <button
+            key={opt}
+            type="button"
+            onClick={() => setStairData({ ...stairData, timeline: opt })}
+            className={`p-5 rounded-2xl border-2 text-left flex items-center gap-4 transition-all group ${
+              stairData.timeline === opt
+                ? "border-[#C9A961] bg-[#C9A961]/5"
+                : "border-gray-200 bg-white hover:border-[#C9A961]/30"
+            }`}
+          >
+            <div
+              className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
+                stairData.timeline === opt
+                  ? "border-[#C9A961]"
+                  : "border-gray-200"
+              }`}
+            >
+              {stairData.timeline === opt && (
+                <div className="w-2.5 h-2.5 rounded-full bg-[#C9A961]"></div>
+              )}
+            </div>
+            <span
+              className={`font-bold transition-colors ${
+                stairData.timeline === opt
+                  ? "text-black"
+                  : "text-gray-400 group-hover:text-gray-600"
+              }`}
+            >
+              {opt}
+            </span>
+          </button>
+        ))}
+      </div>
+    </div>
+
+    {/* Completion Buttons */}
+    <div className="space-y-3 pt-12">
+      <button
+        onClick={onComplete}
+        disabled={!isConfigValid()}
+        className={`w-full py-5 font-black rounded-xl transition-all flex items-center justify-center gap-3 ${
+          isConfigValid()
+            ? "bg-[#C9A961] text-white hover:bg-[#B69752] shadow-xl shadow-[#C9A961]/20"
+            : "bg-gray-200 text-gray-400 cursor-not-allowed"
+        }`}
+      >
+        {isUnlocked ? <Calendar className="w-5 h-5" /> : <Phone className="w-5 h-5" />}
+        <div className="flex flex-col items-center">
+          <span className="text-sm">
+            {isUnlocked ? "Schedule Free In-Home Visit & Get Exclusive Discount" : "View Price & Get PDF Quote"}
+          </span>
+          {!isConfigValid() && (
+            <span className="text-[9px] uppercase tracking-widest opacity-60">
+              Please complete all required fields *
+            </span>
+          )}
+        </div>
+      </button>
+
+      {!isUnlocked && (
+        <button
+          onClick={onSkip}
+          className="w-full py-5 bg-[#ffffff] border hover:cursor-pointer border-[#C9A961] text-[#C9A961]  rounded-xl transition-all font-black"
+        >
+          Skip to Schedule
+        </button>
+      )}
+    </div>
+  </div>
+);
+
+// --- Icons ---
 const LadderIcon = ({ className }) => (
   <svg
     viewBox="0 0 24 24"
