@@ -57,15 +57,16 @@ const FlooringQuizModal = ({ isOpen, onClose, onComplete }) => {
   const handleOptionSelect = (value) => {
     const newAnswers = { ...answers, [currentQuestion.id]: value };
     setAnswers(newAnswers);
-    
+  };
+
+  const handleNext = () => {
     if (step < questions.length - 1) {
-      setTimeout(() => setStep(step + 1), 300);
+      setStep(step + 1);
     } else {
       setLoading(true);
       setTimeout(() => {
         setLoading(false);
-        if (onComplete) onComplete(newAnswers);
-        onClose();
+        if (onComplete) onComplete(answers);
       }, 1500);
     }
   };
@@ -161,11 +162,15 @@ const FlooringQuizModal = ({ isOpen, onClose, onComplete }) => {
            </button>
            {!loading && (
              <button 
-               onClick={() => setStep(Math.min(questions.length - 1, step + 1))}
-               disabled={!answers[currentQuestion.id] || step === questions.length - 1}
-               className="px-8 py-3 bg-gray-100 text-gray-400 font-bold rounded-xl transition-all disabled:opacity-50 flex items-center gap-2"
+               onClick={handleNext}
+               disabled={!answers[currentQuestion.id]}
+               className={`px-8 py-3 font-black rounded-xl transition-all flex items-center gap-2 ${
+                 answers[currentQuestion.id] 
+                   ? "bg-[#C9A961] text-white shadow-lg shadow-[#C9A961]/20" 
+                   : "bg-gray-100 text-gray-400 opacity-50 cursor-not-allowed"
+               }`}
              >
-               Next <ChevronRight className="w-5 h-5" />
+               {step === questions.length - 1 ? "Finish" : "Next"} <ChevronRight className="w-5 h-5" />
              </button>
            )}
         </div>

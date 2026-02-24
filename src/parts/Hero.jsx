@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Star, ShieldCheck, Heart, MapPin, ArrowRight } from "lucide-react";
-import { useEffect } from "react";
 import { getHeroData } from "../api/backend";
+import BookingModal from "./BookingModal";
 
 const heroFallbackData = [
   {
@@ -40,6 +40,7 @@ export const Hero = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [heroApiData, setHeroApiData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
 
   /* ---------- FETCH HERO DATA ---------- */
   useEffect(() => {
@@ -132,7 +133,8 @@ export const Hero = () => {
   })();
 
   return (
-    <section className="relative w-full pt-10 pb-20 lg:pt-20 lg:pb-32 overflow-hidden">
+    <>
+      <section className="relative w-full pt-10 pb-20 lg:pt-20 lg:pb-32 overflow-hidden">
       {/* Background Decorative Elements */}
       <div className="absolute top-0 left-0 w-full h-125 bg-linear-to-b from-[#C9A961]/40 to-transparent opacity-30 pointer-events-none"></div>
       <div className="absolute top-[10%] -left-[10%] w-125 h-125 bg-[#C9A961]/30 blur-[120px] rounded-full pointer-events-none"></div>
@@ -236,12 +238,12 @@ export const Hero = () => {
                 </span>
               </a>
 
-              <a
-                href="#configurator"
+              <button
+                onClick={() => setIsBookingOpen(true)}
                 className="px-10 py-5 bg-transparent border-2 border-white/10 hover:border-[#C9A961] text-white font-bold rounded-2xl transition-all duration-300 text-lg hover:bg-white/5 flex items-center justify-center hover:scale-105"
               >
                 Schedule Free Visit
-              </a>
+              </button>
             </div>
 
             {/* Location Tag */}
@@ -379,6 +381,13 @@ export const Hero = () => {
         </div>
       </div>
     </section>
+
+    <BookingModal
+      isOpen={isBookingOpen}
+      onClose={() => setIsBookingOpen(false)}
+      initialData={{ type: "not_sure" }}
+    />
+    </>
   );
 };
 

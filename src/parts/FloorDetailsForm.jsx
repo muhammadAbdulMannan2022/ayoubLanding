@@ -1,13 +1,29 @@
-import React, { useState } from "react";
-import { CheckCircle2, Sparkles, LayoutGrid, Info, BarChart3, Clock, ArrowRight, Zap, Phone, Calendar } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
+import { CheckCircle2, Sparkles, LayoutGrid, Info, BarChart3, Clock, ArrowRight, Zap, Phone, Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 import FlooringQuizModal from "./FlooringQuizModal";
 import FlooringComparisonModal from "./FlooringComparisonModal";
+import FlooringMatchModal from "./FlooringMatchModal";
 
 const FloorDetailsForm = ({ data, onChange, onComplete, onSkip, isUnlocked }) => {
   const [isQuizModalOpen, setIsQuizModalOpen] = useState(false);
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
+  const [isMatchModalOpen, setIsMatchModalOpen] = useState(false);
 
-  const rooms = [1, 2, 3, 4, "5+"];
+  const rooms = Array.from({ length: 20 }, (_, i) => i + 1);
+  const carouselRef = useRef(null);
+
+  const roomTypes = [
+    "Living Room", "Bedroom", "Kitchen", "Dining Room",
+    "Bathroom", "Hallway", "Office/Study", "Basement",
+    "Family Room", "Laundry Room", "Closet", "Other"
+  ];
+
+  // one card = 80px wide + 12px gap = 92px per step
+  const scrollCarousel = (direction) => {
+    const el = carouselRef.current;
+    if (!el) return;
+    el.scrollBy({ left: direction * 92, behavior: "smooth" });
+  };
   
   const removalOptions = [
     { id: "none", label: "No removal needed (new construction)" },
@@ -106,66 +122,145 @@ const FloorDetailsForm = ({ data, onChange, onComplete, onSkip, isUnlocked }) =>
           <h3 className="text-3xl font-black text-black">How many rooms need flooring?</h3>
         </div>
 
-        <div className="grid grid-cols-5 gap-3">
-          {rooms.map((num) => (
-            <button
-              key={num}
-              onClick={() => {
-                const count = num === "5+" ? 5 : num;
-                const newRoomSizes = [...(data.roomSizes || [])];
-                if (newRoomSizes.length < count) {
-                  for (let i = newRoomSizes.length; i < count; i++) newRoomSizes.push("");
-                } else {
-                  newRoomSizes.splice(count);
-                }
-                onChange({ ...data, roomCount: num, roomSizes: newRoomSizes });
-              }}
-              className={`p-6 rounded-2xl border-2 flex flex-col items-center justify-center gap-1 transition-all ${
-                data.roomCount === num
-                  ? "border-[#C9A961] bg-[#C9A961]/5 shadow-lg shadow-[#C9A961]/10"
-                  : "border-gray-200 hover:border-[#C9A961]/30 hover:bg-gray-50/50"
-              }`}
+        {/* Carousel */}
+        <div className="flex items-center gap-2">
+
+          {/* Left Arrow */}
+          <button
+            onClick={() => scrollCarousel(-1)}
+            className="flex-shrink-0 w-9 h-9 rounded-full bg-white border-2 border-gray-100 shadow-md flex items-center justify-center hover:border-[#C9A961] hover:text-[#C9A961] transition-all"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+
+          {/* Clip window — fixed 448px = exactly 5 cards (5×80px + 4×12px gap) */}
+          <div className="overflow-hidden" style={{ width: "448px", maxWidth: "calc(100% - 88px)", flexShrink: 0 }}>
+            <div
+              ref={carouselRef}
+              className="flex gap-3 overflow-x-auto scroll-smooth py-3 px-4"
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
-              <span className={`text-2xl font-black ${data.roomCount === num ? "text-black" : "text-black/40"}`}>{num}</span>
-              <span className={`text-[10px] font-black uppercase tracking-widest ${data.roomCount === num ? "text-[#C9A961]" : "text-gray-500"}`}>
-                {num === 1 ? "Room" : "Rooms"}
-              </span>
-            </button>
-          ))}
+              {rooms.map((num) => {
+                const isSelected = data.roomCount === num;
+                return (
+                  <button
+                    key={num}
+                    onClick={() => {
+                      const existing = data.roomDetails || [];
+                      let updated;
+                      if (existing.length < num) {
+                        updated = [...existing];
+                        for (let i = existing.length; i < num; i++) updated.push({ type: "", sqft: "" });
+                      } else {
+                        updated = existing.slice(0, num);
+                      }
+                      onChange({ ...data, roomCount: num, roomDetails: updated });
+                    }}
+                    className={`flex-shrink-0 w-20 h-24 rounded-2xl border-2 flex flex-col items-center justify-center gap-1.5 transition-all duration-200 ${
+                      isSelected
+                        ? "border-[#C9A961] bg-[#C9A961]/5 shadow-lg shadow-[#C9A961]/15 scale-[1.06]"
+                        : "border-gray-100 bg-white hover:border-[#C9A961]/50 hover:bg-gray-50"
+                    }`}
+                  >
+                    <span className={`text-3xl font-black leading-none ${
+                      isSelected ? "text-[#C9A961]" : "text-black/25"
+                    }`}>{num}</span>
+                    <span className={`text-[9px] font-black uppercase tracking-widest ${
+                      isSelected ? "text-[#C9A961]" : "text-gray-300"
+                    }`}>
+                      {num === 1 ? "Room" : "Rooms"}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Right Arrow */}
+          <button
+            onClick={() => scrollCarousel(1)}
+            className="flex-shrink-0 w-9 h-9 rounded-full bg-white border-2 border-gray-100 shadow-md flex items-center justify-center hover:border-[#C9A961] hover:text-[#C9A961] transition-all"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+
         </div>
+
+        {/* Selected display */}
+        {data.roomCount && typeof data.roomCount === "number" && (
+          <p className="text-center text-sm font-bold text-[#C9A961] animate-in fade-in duration-300">
+            {data.roomCount} {data.roomCount === 1 ? "room" : "rooms"} selected
+          </p>
+        )}
       </div>
 
-      {/* Step 3: Size */}
+      {/* Step 3: Room Details */}
       <div className="space-y-8">
         <div className="space-y-2">
           <div className="flex items-center gap-4">
             <span className="text-[10px] font-black text-[#C9A961] uppercase tracking-[0.2em]">Step 3</span>
           </div>
-          <h3 className="text-3xl font-black text-black">Enter the size of each room</h3>
-          <p className="text-gray-400 text-sm font-medium">Provide square footage for each room. Approximate measurements work great!</p>
+          <h3 className="text-3xl font-black text-black">Enter details for each room</h3>
+          <p className="text-gray-400 text-sm font-medium">Select the room type and provide approximate square footage for each room.</p>
         </div>
 
-        <div className="space-y-6">
-           {(data.roomSizes || [""]).map((size, index) => (
-             <div key={index} className="space-y-2">
-                <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Room {index + 1} size (SQFT) *</label>
-                <div className="relative">
-                  <input 
-                    type="number" 
-                    placeholder="e.g., 250"
-                    className="w-full px-6 py-5 rounded-2xl border border-gray-200 focus:border-[#C9A961] outline-none transition-all font-bold text-xl pr-20"
-                    value={size}
-                    onChange={(e) => {
-                      const newSizes = [...data.roomSizes];
-                      newSizes[index] = e.target.value;
-                      const totalSqft = newSizes.reduce((sum, s) => sum + (Number(s) || 0), 0);
-                      onChange({ ...data, roomSizes: newSizes, sqft: totalSqft.toString() });
-                    }}
-                  />
-                  <div className="absolute right-6 top-1/2 -translate-y-1/2 text-[#C9A961] font-black text-sm uppercase tracking-widest">SQFT</div>
+        <div className="space-y-4">
+          {(data.roomDetails || [{ type: "", sqft: "" }]).map((room, index) => (
+            <div key={index} className="p-5 rounded-2xl border border-gray-100 bg-white shadow-sm space-y-4">
+              <p className="text-xs font-black text-[#C9A961] uppercase tracking-widest">Room {index + 1}</p>
+              <div className="grid grid-cols-2 gap-4">
+
+                {/* Room Type Dropdown */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Room type *</label>
+                  <div className="relative">
+                    <select
+                      value={room.type}
+                      onChange={(e) => {
+                        const updated = [...(data.roomDetails || [])];
+                        updated[index] = { ...updated[index], type: e.target.value };
+                        onChange({ ...data, roomDetails: updated });
+                      }}
+                      className="w-full px-4 py-4 rounded-xl border border-gray-200 focus:border-[#C9A961] outline-none transition-all font-semibold text-sm text-gray-700 bg-white appearance-none cursor-pointer"
+                    >
+                      <option value="" disabled>Select room type</option>
+                      {roomTypes.map((t) => (
+                        <option key={t} value={t}>{t}</option>
+                      ))}
+                    </select>
+                    <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
-             </div>
-           ))}
+
+                {/* Room Size Input */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Size (square feet) *</label>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      placeholder="e.g., 250"
+                      className="w-full px-4 py-4 rounded-xl border border-gray-200 focus:border-[#C9A961] outline-none transition-all font-semibold text-sm pr-16 text-gray-700"
+                      value={room.sqft}
+                      onChange={(e) => {
+                        const updated = [...(data.roomDetails || [])];
+                        updated[index] = { ...updated[index], sqft: e.target.value };
+                        const totalSqft = updated.reduce((sum, r) => sum + (Number(r.sqft) || 0), 0);
+                        onChange({ ...data, roomDetails: updated, sqft: totalSqft.toString() });
+                      }}
+                    />
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[#C9A961] font-black text-xs uppercase tracking-widest">
+                      SQFT
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -459,7 +554,24 @@ const FloorDetailsForm = ({ data, onChange, onComplete, onSkip, isUnlocked }) =>
       <FlooringQuizModal 
         isOpen={isQuizModalOpen} 
         onClose={() => setIsQuizModalOpen(false)} 
-        onComplete={(answers) => onChange({ ...data, quizResults: answers })}
+        onComplete={(answers) => {
+          onChange({ ...data, quizResults: answers });
+          setIsQuizModalOpen(false);
+          setIsMatchModalOpen(true);
+        }}
+      />
+      <FlooringMatchModal 
+        isOpen={isMatchModalOpen}
+        onClose={() => setIsMatchModalOpen(false)}
+        quizResults={data.quizResults}
+        onSelect={(match) => {
+           onChange({ ...data, material: match.id, grade: match.grade });
+           setIsMatchModalOpen(false);
+        }}
+        onRetake={() => {
+           setIsMatchModalOpen(false);
+           setIsQuizModalOpen(true);
+        }}
       />
       <FlooringComparisonModal 
         isOpen={isCompareModalOpen} 

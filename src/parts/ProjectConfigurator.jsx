@@ -461,13 +461,10 @@ export const ProjectConfigurator = () => {
                   ) : (
                     <button
                       onClick={handleCompleteAllSteps}
-                      disabled={!isConfigValid()}
-                      className="w-full py-5 bg-[#C9A961] hover:bg-[#B69752] text-black font-black rounded-2xl transition-all shadow-xl flex items-center justify-center gap-3 disabled:opacity-70 group"
+                      className="w-full py-5 bg-[#C9A961] hover:bg-[#B69752] text-black font-black rounded-2xl transition-all shadow-xl flex items-center justify-center gap-3 group"
                     >
-                      {isUnlocked ? <Calendar className="w-5 h-5" /> : <Phone className="w-5 h-5 text-black" />}
-                      <span className="text-sm">
-                        {isUnlocked ? "Schedule Free In-Home Visit & Get Exclusive Discount" : "View Price & Get PDF Quote"}
-                      </span>
+                      <Calendar className="w-5 h-5" />
+                      <span className="text-sm">Schedule Free In-Home Visit & Get Exclusive Discount</span>
                     </button>
                   )}
                     <p className="text-[9px] text-white/40 font-medium text-center px-4">

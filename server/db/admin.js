@@ -26,6 +26,11 @@ export const setupAdmin = (app) => {
     path.resolve(__dirname, "../views/dashboard"),
   );
 
+  const downloadButtonComponent = componentLoader.add(
+    "DownloadButton",
+    path.resolve(__dirname, "../views/DownloadButton"),
+  );
+
   componentLoader.override("Login", path.resolve(__dirname, "../views/login"));
 
   const adminOptions = {
@@ -271,7 +276,7 @@ export const setupAdmin = (app) => {
           properties: {
             stairDetails: { type: "mixed" },
             floorDetails: { type: "mixed" },
-            pdfUrl: { type: "string", components: { show: "DownloadButton" } },
+            pdfUrl: { type: "string", components: { show: downloadButtonComponent, list: downloadButtonComponent } },
             id: { isVisible: { list: false, filter: true, show: true, edit: false } },
           },
           actions: {
